@@ -1,0 +1,31 @@
+{
+  "name": "scitran-organizer",
+  "version": "0.0.1",
+  "description": "SciTran Data Organizer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scitran/organizer.git"
+  },
+  "keywords": [
+    "SciTran",
+    "Data",
+    "Organizer",
+    "DICOM",
+    "NIfTI",
+    "BIDS",
+    "OpenfMRI"
+  ],
+  "author": "SciTran Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scitran/organizer/issues"
+  },
+  "homepage": "https://github.com/scitran/organizer#readme",
+  "devDependencies": {
+    "electron-prebuilt": "^0.37.8"
+  }
+}
