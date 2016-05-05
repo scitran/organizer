@@ -15,9 +15,7 @@ exports.attachElement = function(path) {
                 }
                 else {
                     files.forEach((f) => {
-                        var div = document.createElement('div');
-                        div.textContent = f;
-                        doc.appendChild(div);
+                        recListDir(doc, f, path, '');
                     });
                 }
             });
@@ -26,4 +24,21 @@ exports.attachElement = function(path) {
         }
     })
     return false
+}
+
+var recListDir = function(rootEl, path, path_so_far, indent) {
+    var div = document.createElement('div');
+    div.textContent = indent + path;
+    rootEl.appendChild(div);
+    var full_path = path_so_far + '/' + path;
+    console.log(full_path);
+    fs.stat(full_path, (err, stat) => {
+        if (stat.isDirectory()) {
+            fs.readdir(full_path, (err, files) => {
+                files.forEach((f) => {
+                    recListDir(div, f, full_path, '__' + indent);
+                });
+            });
+        }
+    });
 }
