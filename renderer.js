@@ -21,7 +21,7 @@ module.exports.attachElement = function(path) {
             doc.textContent = 'path does not exist';
         }
     });
-    return false
+    return false;
 }
 
 var dirList = function(root, dirPath, indent) {
