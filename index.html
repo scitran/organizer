@@ -11,7 +11,12 @@
       <input type="text" name="path"><br>
       <input type="submit" value="Submit">
     </form>
-    <div class="filelist">
+    <div class="content">
+      <div class="filelist">
+      </div>
+      <br>
+      <div class="dicom-dump">
+      </div>
     </div>
     <br>
     <!-- All of the Node.js APIs are available in this renderer process. -->
@@ -21,7 +26,8 @@
   </body>
 
   <script>
-    // You can also require other files to run in this process
     const renderer = require('./renderer.js');
+    const dicomParser = require('dicom-parser');
+    const dicom = require('./dicom.js');
   </script>
 </html>
