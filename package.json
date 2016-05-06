@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/scitran/organizer#readme",
   "devDependencies": {
+    "dicom-parser": "^1.4.1",
     "electron-packager": "^7.0.1",
     "electron-prebuilt": "^0.37.8"
   }

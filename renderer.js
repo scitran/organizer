@@ -1,12 +1,10 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
+"use strict";
 
-var fs = require('fs');
-var exports = module.exports;
+const fs = require('fs');
+const dicomDump = require('./dicom.js').dicomDump;
 
-module.exports.attachElement = function(path) {
-    var doc = document.getElementsByClassName('filelist')[0];
+const attachElement = function(path) {
+    let doc = document.getElementsByClassName('filelist')[0];
     doc.textContent = '';
     fs.exists(path, (exists) => {
         if (exists) {
@@ -25,22 +23,50 @@ module.exports.attachElement = function(path) {
 }
 
 var dirList = function(root, dirPath, indent) {
-    console.log(dirPath);
     fs.readdir(dirPath, (err, files) => {
         files.forEach((f) => {
             if (!f.startsWith('.')) {
-                var fPath = dirPath + '/' + f;
-                console.log(fPath);
+                let fPath = dirPath + '/' + f;
                 fs.stat(fPath, (err, stat) => {
-                    var div = document.createElement('div');
-                    div.innerHTML = indent + f;
+                    let element = createDIVorDicomLink(fPath, f, indent);
                     if (stat.isDirectory()) {
-                        div.innerHTML += '/';
-                        dirList(div, fPath, '&nbsp;&nbsp;' + indent);
+                        element.innerHTML += '/';
+                        dirList(element, fPath, '&nbsp;&nbsp;' + indent);
                     }
-                    root.appendChild(div);
+                    root.appendChild(element);
                 });
             }
         });
     });
+}
+
+var createDIVorDicomLink = function(fPath, f, indent) {
+  let element = document.createElement('div');
+  element.innerHTML = indent;
+  if (fPath.endsWith('.dcm')) {
+    let a = document.createElement('a');
+    a.onclick = function(){return renderer.appendDicomDump(fPath);};
+    a.setAttribute('href', '#');
+    a.innerHTML = f;
+    element.appendChild(a);
+  } else {
+    element.innerHTML += f;
+  }
+  return element;
+}
+
+const appendDicomDump = function(path) {
+  let doc = document.getElementsByClassName('dicom-dump')[0];
+  doc.innerHTML = '';
+  dicomDump(path).forEach((line) => {
+    let div = document.createElement('div');
+    div.innerHTML = line;
+    doc.appendChild(div);
+  });
+  return false;
+}
+
+module.exports = {
+  attachElement: attachElement,
+  appendDicomDump: appendDicomDump
 }
