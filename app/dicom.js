@@ -1,21 +1,21 @@
-"use strict";
+'use strict';
 
-const dicomParser = require('dicom-parser');
 const fs = require('fs');
+const dicomParser = require('dicom-parser');
 const TAG_DICT = require('./dataDictionary.js').TAG_DICT;
 
 const parse = (filePath) => {
   const dicomFileAsBuffer = fs.readFileSync(filePath);
   return dicomParser.parseDicom(dicomFileAsBuffer);
-}
+};
 
 
 const getTag = (tag) => {
     const group = tag.substring(1,5);
     const element = tag.substring(5,9);
-    const tagIndex = ("("+group+","+element+")").toUpperCase();
+    const tagIndex = ('(' + group + ',' + element + ')').toUpperCase();
     return TAG_DICT[tagIndex];
-}
+};
 
 const dicomDump = (filePath) => {
   const dp = parse(filePath);
@@ -27,8 +27,8 @@ const dicomDump = (filePath) => {
     dump.push(line);
   }
   return dump;
-}
+};
 
 module.exports = {
   dicomDump: dicomDump
-}
+};
