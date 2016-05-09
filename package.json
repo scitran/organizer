@@ -8,6 +8,7 @@
     "start": "electron main.js",
     "start-hot": "cross-env HOT=1 electron main.js",
     "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
+    "lint": "jshint app *.js",
     "clean": "rm -rf ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
