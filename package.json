@@ -6,7 +6,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-    "dev": "electron . --enable-logging",
+    "start-hot": "cross-env HOT=1 electron main.js",
+    "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
     "clean": "rm -rf ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
@@ -15,7 +16,9 @@
     "pack:win": "npm run clean:win && electron-packager . --out=dist/win --platform=win32 --arch=ia32 --version=0.37.8 --icon=assets/win/logo.ico --ignore=dist --ignore=assets --ignore=builder.json --ignore=bower.json --ignore=README.md --ignore=.gitignore --ignore=preview.png",
     "build": "npm run build:osx && npm run build:win",
     "build:osx": "npm run pack:osx && electron-builder \"dist/osx/*-darwin-x64/*.app\" --platform=osx --out=\"dist/osx\" --config=builder.json",
-    "build:win": "npm run pack:win && electron-builder \"dist/win/*-win32-ia32\" --platform=win --out=\"dist/win\" --config=builder.json"
+    "build:win": "npm run pack:win && electron-builder \"dist/win/*-win32-ia32\" --platform=win --out=\"dist/win\" --config=builder.json",
+    "webpack": "webpack",
+    "watch": "webpack-dev-server --hot --inline"
   },
   "repository": {
     "type": "git",
@@ -37,8 +40,14 @@
   },
   "homepage": "https://github.com/scitran/organizer#readme",
   "devDependencies": {
+    "concurrently": "^2.0.0",
+    "cross-env": "^1.0.7",
     "dicom-parser": "^1.4.1",
     "electron-packager": "^7.0.1",
-    "electron-prebuilt": "^0.37.8"
+    "electron-prebuilt": "^0.37.8",
+    "jshint": "^2.9.2",
+    "jshint-loader": "^0.8.3",
+    "webpack": "^1.13.0",
+    "webpack-dev-server": "^1.14.1"
   }
 }
