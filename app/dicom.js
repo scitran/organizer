@@ -11,10 +11,10 @@ const parse = (filePath) => {
 
 
 const getTag = (tag) => {
-    const group = tag.substring(1,5);
-    const element = tag.substring(5,9);
-    const tagIndex = ('(' + group + ',' + element + ')').toUpperCase();
-    return TAG_DICT[tagIndex];
+  const group = tag.substring(1,5);
+  const element = tag.substring(5,9);
+  const tagIndex = ('(' + group + ',' + element + ')').toUpperCase();
+  return TAG_DICT[tagIndex];
 };
 
 const dicomDump = (filePath) => {

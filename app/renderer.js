@@ -19,40 +19,40 @@ var createDIVorDicomLink = function(fPath, f, indent) {
 };
 
 const dirList = function(root, dirPath, indent) {
-    fs.readdir(dirPath, (err, files) => {
-        files.forEach((f) => {
-            if (!f.startsWith('.')) {
-                let fPath = dirPath + '/' + f;
-                fs.stat(fPath, (err, stat) => {
-                    let element = createDIVorDicomLink(fPath, f, indent);
-                    if (stat.isDirectory()) {
-                        element.innerHTML += '/';
-                        dirList(element, fPath, '&nbsp;&nbsp;&nbsp;' + indent);
-                    }
-                    root.appendChild(element);
-                });
-            }
+  fs.readdir(dirPath, (err, files) => {
+    files.forEach((f) => {
+      if (!f.startsWith('.')) {
+        let fPath = dirPath + '/' + f;
+        fs.stat(fPath, (err, stat) => {
+          let element = createDIVorDicomLink(fPath, f, indent);
+          if (stat.isDirectory()) {
+            element.innerHTML += '/';
+            dirList(element, fPath, '&nbsp;&nbsp;&nbsp;' + indent);
+          }
+          root.appendChild(element);
         });
+      }
     });
+  });
 };
 
 const attachElement = function(path) {
-    let doc = document.getElementsByClassName('filelist')[0];
-    doc.textContent = '';
-    fs.exists(path, (exists) => {
-        if (exists) {
-            fs.stat(path, (err, stat) => {
-                if (stat.isDirectory()) {
-                    dirList(doc, path, '');
-                } else {
-                    doc.textContent = 'path must be a directory';
-                }
-            });
+  let doc = document.getElementsByClassName('filelist')[0];
+  doc.textContent = '';
+  fs.exists(path, (exists) => {
+    if (exists) {
+      fs.stat(path, (err, stat) => {
+        if (stat.isDirectory()) {
+          dirList(doc, path, '');
         } else {
-            doc.textContent = 'path does not exist';
+          doc.textContent = 'path must be a directory';
         }
-    });
-    return false;
+      });
+    } else {
+      doc.textContent = 'path does not exist';
+    }
+  });
+  return false;
 };
 
 const appendDicomDump = function(path) {

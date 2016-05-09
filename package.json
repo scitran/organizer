@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron main.js",
     "start-hot": "cross-env HOT=1 electron main.js",
-    "dev": "electron . --enable-logging",
+    "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
     "clean": "rm -rf ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
@@ -45,6 +45,8 @@
     "dicom-parser": "^1.4.1",
     "electron-packager": "^7.0.1",
     "electron-prebuilt": "^0.37.8",
+    "jshint": "^2.9.2",
+    "jshint-loader": "^0.8.3",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
   }
