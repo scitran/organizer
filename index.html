@@ -6,13 +6,13 @@
   </head>
   <body>
     <h1>Show files in folder</h1>
-    <form onsubmit="renderer.attachElement(this.path.value);return false">
+    <form onsubmit="renderer.appendDicomSort(this.path.value);return false">
       Path:<br>
       <input type="text" name="path"><br>
       <input type="submit" value="Submit">
     </form>
     <div class="content">
-      <div class="filelist">
+      <div class="dicom-sort">
       </div>
       <br>
       <div class="dicom-dump">
