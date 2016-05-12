@@ -11,16 +11,16 @@ const createAndAppendDIV = (parent, content) => {
   return div;
 };
 
-const createAndAppendDicomLink = (parent, indent, content, fPath) => {
-  let element = document.createElement('div');
-  element.innerHTML = indent;
-  let a = document.createElement('a');
-  a.onclick = function(){return window.renderer.appendDicomDump(fPath);};
-  a.setAttribute('href', '#');
-  a.innerHTML = content;
-  element.appendChild(a);
-  parent.appendChild(element);
-};
+// const createAndAppendDicomLink = (parent, indent, content, fPath) => {
+//   let element = document.createElement('div');
+//   element.innerHTML = indent;
+//   let a = document.createElement('a');
+//   a.onclick = function(){return window.renderer.appendDicomDump(fPath);};
+//   a.setAttribute('href', '#');
+//   a.innerHTML = content;
+//   element.appendChild(a);
+//   parent.appendChild(element);
+// };
 
 const dirListObs = function(path) {
   const _helperObs = path =>
@@ -50,28 +50,34 @@ class View {
   }
 
   appendDicom(dicom) {
-    if (!this.sessions.has(dicom.session)) {
+    if (!this.sessions.has(dicom.sessionUID)) {
       this.sessions.set(
-        dicom.session,
+        dicom.sessionUID,
         {
           acqMap: new Map(),
-          sesDiv: createAndAppendDIV(this.root, dicom.session)
+          sesDiv: createAndAppendDIV(this.root, dicom.sessionUID)
         }
       );
     }
-    let {sesDiv, acqMap} = this.sessions.get(dicom.session);
-    if (!acqMap.has(dicom.acquisition)) {
+    let {sesDiv, acqMap} = this.sessions.get(dicom.sessionUID);
+    if (!acqMap.has(dicom.acquisitionUID)) {
       acqMap.set(
-        dicom.acquisition,
-        createAndAppendDIV(sesDiv, this.indent + dicom.acquisition)
+        dicom.acquisitionUID,
+        {
+          acqDiv: createAndAppendDIV(sesDiv, this.indent + dicom.acquisitionLabel),
+          count: 0
+        }
       );
     }
-    let acqDiv = acqMap.get(dicom.acquisition);
-    let fsplit = dicom.name.split('/');
-    let fname = fsplit[fsplit.length - 1];
-    createAndAppendDicomLink(
-      acqDiv, this.indent + this.indent, fname, dicom.name
-    );
+    let acquisition = acqMap.get(dicom.acquisitionUID);
+    acquisition.count += 1;
+    acquisition.acqDiv.innerHTML = (
+      this.indent + dicom.acquisitionLabel + ' (' + acquisition.count + ' files)');
+    // let fsplit = dicom.name.split('/');
+    // let fname = fsplit[fsplit.length - 1];
+    // createAndAppendDicomLink(
+    //   acqDiv, this.indent + this.indent, fname, dicom.name
+    // );
   }
 }
 

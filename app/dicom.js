@@ -52,21 +52,23 @@ const dicomSort = (files) => files.map(
     const seriesUID = dp.string(getKeyFromName('SeriesInstanceUID'));
     const manufacturer = dp.string(getKeyFromName('Manufacturer'));
     const acquisitionNumber = dp.string(getKeyFromName('AcquisitionNumber'));
+    const acquisitionLabel = dp.string(getKeyFromName('SeriesDescription'));
     var acquisitionUID;
-    if (manufacturer.toUpperCase() != 'SIEMENS') {
+    if (manufacturer.toUpperCase() !== 'SIEMENS' && acquisitionNumber !== undefined) {
       acquisitionUID = seriesUID + '_' + acquisitionNumber;
     } else {
       acquisitionUID = seriesUID;
     }
     return {
       name: f,
-      session: sessionUID,
-      acquisition: acquisitionUID
+      sessionUID: sessionUID,
+      acquisitionUID: acquisitionUID,
+      acquisitionLabel: acquisitionLabel
     };
   }
 ).filter(
   (o) => {
-    return o.session !== undefined && o.acquisition !== undefined;
+    return o.sessionUID !== undefined && o.acquisitionUID !== undefined;
   }
 );
 
