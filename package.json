@@ -19,7 +19,8 @@
     "build:osx": "npm run pack:osx && electron-builder \"dist/osx/*-darwin-x64/*.app\" --platform=osx --out=\"dist/osx\" --config=builder.json",
     "build:win": "npm run pack:win && electron-builder \"dist/win/*-win32-ia32\" --platform=win --out=\"dist/win\" --config=builder.json",
     "webpack": "webpack",
-    "watch": "webpack-dev-server --hot --inline"
+    "watch": "webpack-dev-server --hot --inline",
+    "node": "node"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
     "electron-prebuilt": "^0.37.8",
     "jshint": "^2.9.2",
     "jshint-loader": "^0.8.3",
+    "rxjs": "^5.0.0-beta.7",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1"
   }

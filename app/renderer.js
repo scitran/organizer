@@ -1,72 +1,121 @@
 'use strict';
 
 const fs = require('fs');
-const dicomDump = require('./dicom.js').dicomDump;
+const {dicomDump, dicomSort} = require('./dicom.js');
+const Rx = require('rxjs/Rx');
 
-var createDIVorDicomLink = function(fPath, f, indent) {
-  let element = document.createElement('div');
-  element.innerHTML = indent;
-  if (fPath.endsWith('.dcm')) {
-    let a = document.createElement('a');
-    a.onclick = function(){return window.renderer.appendDicomDump(fPath);};
-    a.setAttribute('href', '#');
-    a.innerHTML = f;
-    element.appendChild(a);
-  } else {
-    element.innerHTML += f;
-  }
-  return element;
+const createAndAppendDIV = (parent, content) => {
+  let div = document.createElement('div');
+  div.innerHTML = content;
+  parent.appendChild(div);
+  return div;
 };
 
-const dirList = function(root, dirPath, indent) {
-  fs.readdir(dirPath, (err, files) => {
-    files.forEach((f) => {
-      if (!f.startsWith('.')) {
-        let fPath = dirPath + '/' + f;
-        fs.stat(fPath, (err, stat) => {
-          let element = createDIVorDicomLink(fPath, f, indent);
-          if (stat.isDirectory()) {
-            element.innerHTML += '/';
-            dirList(element, fPath, '&nbsp;&nbsp;&nbsp;' + indent);
-          }
-          root.appendChild(element);
-        });
-      }
-    });
-  });
-};
+// const createAndAppendDicomLink = (parent, indent, content, fPath) => {
+//   let element = document.createElement('div');
+//   element.innerHTML = indent;
+//   let a = document.createElement('a');
+//   a.onclick = function(){return window.renderer.appendDicomDump(fPath);};
+//   a.setAttribute('href', '#');
+//   a.innerHTML = content;
+//   element.appendChild(a);
+//   parent.appendChild(element);
+// };
 
-const attachElement = function(path) {
-  let doc = document.getElementsByClassName('filelist')[0];
-  doc.textContent = '';
-  fs.exists(path, (exists) => {
-    if (exists) {
+const dirListObs = function(path) {
+  const _helperObs = path =>
+    Rx.Observable.create(function(observer){
       fs.stat(path, (err, stat) => {
         if (stat.isDirectory()) {
-          dirList(doc, path, '');
+          fs.readdir(path, (err, files) => {
+            files.forEach(f => observer.next(path + '/' + f));
+            observer.complete();
+          });
         } else {
-          doc.textContent = 'path must be a directory';
+          observer.complete();
         }
+
       });
-    } else {
-      doc.textContent = 'path does not exist';
+    });
+  return Rx.Observable
+    .of(path)
+    .expand(_helperObs);
+};
+
+class View {
+  constructor(root, indent) {
+    this.root = root;
+    this.sessions = new Map();
+    this.indent = indent;
+  }
+
+  appendDicom(dicom) {
+    if (!this.sessions.has(dicom.sessionUID)) {
+      this.sessions.set(
+        dicom.sessionUID,
+        {
+          acqMap: new Map(),
+          sesDiv: createAndAppendDIV(this.root, dicom.sessionUID)
+        }
+      );
     }
-  });
+    let {sesDiv, acqMap} = this.sessions.get(dicom.sessionUID);
+    if (!acqMap.has(dicom.acquisitionUID)) {
+      acqMap.set(
+        dicom.acquisitionUID,
+        {
+          acqDiv: createAndAppendDIV(sesDiv, this.indent + dicom.acquisitionLabel),
+          count: 0
+        }
+      );
+    }
+    let acquisition = acqMap.get(dicom.acquisitionUID);
+    acquisition.count += 1;
+    acquisition.acqDiv.innerHTML = (
+      this.indent + dicom.acquisitionLabel + ' (' + acquisition.count + ' files)');
+    // let fsplit = dicom.name.split('/');
+    // let fname = fsplit[fsplit.length - 1];
+    // createAndAppendDicomLink(
+    //   acqDiv, this.indent + this.indent, fname, dicom.name
+    // );
+  }
+}
+
+const appendDicomSort = function(path) {
+  document.getElementsByClassName('dicom-dump')[0].innerHTML = '';
+  const doc = document.getElementsByClassName('dicom-sort')[0];
+  doc.innerHTML = '';
+  try {
+    fs.accessSync(path);
+  } catch (exc) {
+    createAndAppendDIV(doc, path + ' is not accessible on the filesystem.');
+  }
+  const view = new View(doc, '&nbsp;&nbsp;&nbsp;');
+  const obsFiles = dirListObs(path);
+  dicomSort(obsFiles).subscribe(
+    function(dicom) {
+      view.appendDicom(dicom);
+    },
+    function (err) {
+      console.log('Error: ' + err);
+    },
+    function () {
+      console.log('Completed');
+    }
+  );
   return false;
 };
 
 const appendDicomDump = function(path) {
   let doc = document.getElementsByClassName('dicom-dump')[0];
   doc.innerHTML = '';
-  dicomDump(path).forEach((line) => {
-    let div = document.createElement('div');
-    div.innerHTML = line;
-    doc.appendChild(div);
-  });
+  dicomDump(path).forEach(
+    (line) => createAndAppendDIV(doc, line)
+  );
   return false;
 };
 
 window.renderer = {
-  attachElement: attachElement,
-  appendDicomDump: appendDicomDump
+  appendDicomDump: appendDicomDump,
+  appendDicomSort: appendDicomSort
 };
