@@ -48,12 +48,20 @@ const dicomSort = (files) => files.map(
     } catch (exc) {
       return {name: f};
     }
-    const session = dp.string(getKeyFromName('StudyInstanceUID'));
-    const acquisition = dp.string(getKeyFromName('SeriesInstanceUID'));
+    const sessionUID = dp.string(getKeyFromName('StudyInstanceUID'));
+    const seriesUID = dp.string(getKeyFromName('SeriesInstanceUID'));
+    const manufacturer = dp.string(getKeyFromName('Manufacturer'));
+    const acquisitionNumber = dp.string(getKeyFromName('AcquisitionNumber'));
+    var acquisitionUID;
+    if (manufacturer.toUpperCase() != 'SIEMENS') {
+      acquisitionUID = seriesUID + '_' + acquisitionNumber;
+    } else {
+      acquisitionUID = seriesUID;
+    }
     return {
       name: f,
-      session: session,
-      acquisition: acquisition
+      session: sessionUID,
+      acquisition: acquisitionUID
     };
   }
 ).filter(
