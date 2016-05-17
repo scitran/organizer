@@ -1,0 +1,24 @@
+{
+    "root": true,
+
+    "env": {
+        "es6": true,
+        'browser': true,    // for the browser
+        'commonjs': true
+    },
+
+    "ecmaFeatures": {
+        "modules": true
+    },
+    "plugins": [
+      "react"
+    ],
+
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+
+    "rules": {
+      "indent": ["error", 2],
+      "no-console": 1,
+      "react/prop-types": [1, {}]
+    }
+}
