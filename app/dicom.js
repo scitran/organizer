@@ -10,7 +10,11 @@ const REVERSE_TAG_DICT = new Map(
 
 const parse = (filePath) => {
   const dicomFileAsBuffer = fs.readFileSync(filePath);
-  return dicomParser.parseDicom(dicomFileAsBuffer);
+  const size = dicomFileAsBuffer.length * dicomFileAsBuffer.BYTES_PER_ELEMENT;
+  return {
+    dp: dicomParser.parseDicom(dicomFileAsBuffer),
+    size: size
+  };
 };
 
 
@@ -29,7 +33,7 @@ const getKeyFromName = name => {
 };
 
 const dicomDump = (filePath) => {
-  const dp = parse(filePath);
+  const dp = parse(filePath).dp;
   let dump = [];
   for (let key of Object.keys(dp.elements)) {
     let tag = getTag(key);
@@ -40,11 +44,34 @@ const dicomDump = (filePath) => {
   return dump;
 };
 
+const convertHeaderToMap = (header) => {
+  let m = new Map();
+  for (let key of Object.keys(header.elements)) {
+    let tag = getTag(key);
+    let value = header.string(key);
+    if (tag) {
+      m.set(tag.name, value);
+    } else {
+      m.set(key, value);
+    }
+  }
+  return m;
+};
+
+const getSessionTimestamp = (dicomHeader) => {
+  return dicomHeader.get('StudyDate') + ' ' + dicomHeader.get('StudyTime');
+};
+const getAcquisitionTimestamp = (dicomHeader) => {
+  return dicomHeader.get('AcquisitionDate') + ' ' + dicomHeader.get('AcquisitionTime');
+};
+
 const dicomSort = (files) => files.map(
   (f) => {
-    let dp;
+    let dp, size;
     try {
-      dp = parse(f);
+      let parsed = parse(f);
+      dp = parsed.dp;
+      size = parsed.size;
     } catch (exc) {
       return {name: f};
     }
@@ -59,11 +86,17 @@ const dicomSort = (files) => files.map(
     } else {
       acquisitionUID = seriesUID;
     }
+    const fullHeader = convertHeaderToMap(dp);
     return {
       name: f,
+      size: size,
       sessionUID: sessionUID,
+      patientID: fullHeader.get('PatientID'),
+      sessionTimestamp: getSessionTimestamp(fullHeader),
       acquisitionUID: acquisitionUID,
-      acquisitionLabel: acquisitionLabel
+      acquisitionLabel: acquisitionLabel,
+      acquisitionTimestamp: getAcquisitionTimestamp(fullHeader),
+      fullHeader: fullHeader
     };
   }
 ).filter(

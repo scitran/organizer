@@ -3650,5 +3650,5 @@ module.exports.TAG_DICT = {
   '(FFFC,FFFC)': {'tag': '(FFFC,FFFC)', 'vr': 'OB', 'vm': '1', 'name': 'DataSetTrailingPadding'},
   '(FFFE,E000)': {'tag': '(FFFE,E000)', 'vr': '', 'vm': '1', 'name': 'Item'},
   '(FFFE,E00D)': {'tag': '(FFFE,E00D)', 'vr': '', 'vm': '1', 'name': 'ItemDelimitationItem'},
-  '(FFFE,E0DD)': {'tag': '(FFFE,E0DD)', 'vr': '', 'vm': '1', 'name': 'SequenceDelimitationItem'},
+  '(FFFE,E0DD)': {'tag': '(FFFE,E0DD)', 'vr': '', 'vm': '1', 'name': 'SequenceDelimitationItem'}
 };
