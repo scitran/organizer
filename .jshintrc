@@ -36,6 +36,7 @@
   "globalstrict"  : true,
   "iterator"      : false,
   "lastsemic"     : false,
+  "latedef"       : "nofunc",
   "laxbreak"      : false,
   "laxcomma"      : false,
   "loopfunc"      : false,

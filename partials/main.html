@@ -1,0 +1,20 @@
+<div className="padded-more">
+  <div className="start-button">
+    <button className="btn btn-positive btn-large" ng-click="main.selectFolder()">Show files in folder</button>
+  </div>
+  <br>
+  <div>
+    Data format: <select class="form-control" ng-model="main.viewType" ng-change="main.updateView()">
+      <option value="series">Series</option>
+      <option value="bids">BIDS</option>
+    </select>
+  </div>
+  <div id="selected-directory">
+  </div>
+  <div id="error">
+  </div>
+  <div id="message">
+  </div>
+  <div ui-view>
+  </div>
+</div>

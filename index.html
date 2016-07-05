@@ -2,33 +2,12 @@
 <html>
   <head>
     <title>Organizer</title>
-
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/photon.css">
-    <link rel="stylesheet" href="css/main.css">
   </head>
 
   <body>
-    <!-- Wrap your entire app inside .window -->
-    <div class="window">
-      <!-- .toolbar-header sits at the top of your app -->
-
-      <!-- Your app's content goes inside .window-content -->
-      <div class="window-content">
-        <div class="padded-more">
-          <div class="start-button">
-            <button id="select-directory" class="btn btn-positive btn-large">Show files in folder</button>
-          </div>
-          <div id="selected-directory">
-          </div>
-          <div id="statistics">
-          </div>
-          <div class="dicom-sort">
-          </div>
-        </div>
-      </div>
-    </div>
+    <div ui-view></div>
   </body>
+  <!--script src="node_modules/angular/angular.min.js"/-->
   <script>
     // require("./renderer.js")
     (function() {
@@ -38,41 +17,3 @@
     }());
   </script>
 </html>
-
-
-
-<!--html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <script >
-  </head>
-  <body>
-    <h1>Show files in folder</h1>
-    <form onsubmit="renderer.appendDicomSort(this.path.value);return false">
-      Path:<br>
-      <input type="text" name="path"><br>
-      <input type="submit" value="Submit">
-    </form>
-    <div class="content">
-      <div class="dicom-sort">
-      </div>
-      <br>
-      <div class="dicom-dump">
-      </div>
-    </div>
-    <br>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-  </body>
-
-  <script>
-    // require("./renderer.js")
-    (function() {
-      const script = document.createElement('script');
-      script.src = (process.env.HOT) ? 'http://localhost:8080/build/app.bundle.js' : 'build/app.bundle.js';
-      document.write(script.outerHTML);
-    }());
-  </script>
-</html-->

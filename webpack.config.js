@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = {
-  entry: './app/renderer.jsx',
+  entry: './app/renderer.js',
   output: {
     path: __dirname + '/build',
     filename: 'app.bundle.js',

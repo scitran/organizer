@@ -1,0 +1,22 @@
+<table ng-show="series.dicoms.length">
+  <thead>
+    <tr>
+      <th>Session Timestamp</th>
+      <th>Patient ID</th>
+      <th>Acquisition Label</th>
+      <th>Acquisition Timestamp</th>
+      <th>Files</th>
+      <th>Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="dicom in series.dicoms">
+      <td>{{dicom.session}}</td>
+      <td>{{dicom.patient}}</td>
+      <td>{{dicom.acquisition.acquisitionLabel}}</td>
+      <td>{{dicom.acquisition.acquisitionTimestamp}}</td>
+      <td>{{dicom.acquisition.count}}</td>
+      <td>{{series.humanReadableSize(dicom.acquisition.size)}}</td>
+    </tr>
+  </tbody>
+</table>

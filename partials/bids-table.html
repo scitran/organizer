@@ -1,0 +1,17 @@
+<table ng-show="bids.dicoms.length">
+  <thead>
+    <tr>
+      <th>Series Label</th>
+      <th>Resolution</th>
+      <th>Acquisition Matrix</th>
+      <th>Echo Time</th>
+      <th>Repetition Time</th>
+      <th>Flip Angle</th>
+      <th>Files</th>
+      <th>Size</th>
+    </tr>
+  </thead>
+  <tr ng-repeat="dicom in bids.dicoms">
+    <td ng-repeat="cell in dicom track by $index">{{cell}}</td>
+  </tr>
+</table>

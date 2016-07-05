@@ -1,12 +1,13 @@
 'use strict';
+const angular = require('angular');
+
+const app = angular.module('app');
 
 const fs = require('fs');
+const Rx = require('rxjs/Rx');
+const {dirListObs} = require('./util.js');
 const dicomParser = require('dicom-parser');
 const TAG_DICT = require('./dataDictionary.js').TAG_DICT;
-
-const REVERSE_TAG_DICT = new Map(
-  Object.keys(TAG_DICT).map(k => [TAG_DICT[k].name, TAG_DICT[k]])
-);
 
 const parse = (filePath) => {
   const dicomFileAsBuffer = fs.readFileSync(filePath);
@@ -17,19 +18,11 @@ const parse = (filePath) => {
   };
 };
 
-
 const getTag = (key) => {
   const group = key.substring(1,5);
   const element = key.substring(5,9);
   const tagIndex = ('(' + group + ',' + element + ')').toUpperCase();
   return TAG_DICT[tagIndex];
-};
-
-const getKeyFromName = name => {
-  if (REVERSE_TAG_DICT.get(name) !== undefined){
-    const tag = REVERSE_TAG_DICT.get(name).tag;
-    return ('x' + tag.substring(1,5) + tag.substring(6,10)).toLowerCase();
-  }
 };
 
 const dicomDump = (filePath) => {
@@ -44,68 +37,77 @@ const dicomDump = (filePath) => {
   return dump;
 };
 
-const convertHeaderToMap = (header) => {
-  let m = new Map();
+const convertHeaderToObject = (header) => {
+  let m = Object.create(null);
   for (let key of Object.keys(header.elements)) {
     let tag = getTag(key);
     let value = header.string(key);
     if (tag) {
-      m.set(tag.name, value);
+      m[tag.name] = value;
     } else {
-      m.set(key, value);
+      m[key] = value;
     }
   }
   return m;
 };
 
-const getSessionTimestamp = (dicomHeader) => {
-  return dicomHeader.get('StudyDate') + ' ' + dicomHeader.get('StudyTime');
-};
-const getAcquisitionTimestamp = (dicomHeader) => {
-  return dicomHeader.get('AcquisitionDate') + ' ' + dicomHeader.get('AcquisitionTime');
-};
-
-const dicomSort = (files) => files.map(
+const parseDicoms = (files) => files.map(
   (f) => {
-    let dp, size;
     try {
-      let parsed = parse(f);
-      dp = parsed.dp;
-      size = parsed.size;
+      const parsed = parse(f);
+      return {
+        name: f,
+        size: parsed.size,
+        header: convertHeaderToObject(parsed.dp)
+      };
     } catch (exc) {
       return {name: f};
     }
-    const sessionUID = dp.string(getKeyFromName('StudyInstanceUID'));
-    const seriesUID = dp.string(getKeyFromName('SeriesInstanceUID'));
-    const manufacturer = dp.string(getKeyFromName('Manufacturer'));
-    const acquisitionNumber = dp.string(getKeyFromName('AcquisitionNumber'));
-    const acquisitionLabel = dp.string(getKeyFromName('SeriesDescription'));
-    var acquisitionUID;
-    if (manufacturer.toUpperCase() !== 'SIEMENS' && acquisitionNumber !== undefined) {
-      acquisitionUID = seriesUID + '_' + acquisitionNumber;
-    } else {
-      acquisitionUID = seriesUID;
-    }
-    const fullHeader = convertHeaderToMap(dp);
-    return {
-      name: f,
-      size: size,
-      sessionUID: sessionUID,
-      patientID: fullHeader.get('PatientID'),
-      sessionTimestamp: getSessionTimestamp(fullHeader),
-      acquisitionUID: acquisitionUID,
-      acquisitionLabel: acquisitionLabel,
-      acquisitionTimestamp: getAcquisitionTimestamp(fullHeader),
-      fullHeader: fullHeader
-    };
+
   }
 ).filter(
   (o) => {
-    return o.sessionUID !== undefined && o.acquisitionUID !== undefined;
+    return o.header !== undefined;
   }
 );
 
+const sortDicoms = function(path) {
+  const subject = new Rx.Subject();
+  try {
+    fs.accessSync(path);
+  } catch (exc) {
+    subject.error(path + ' is not accessible on the filesystem.');
+  }
+  const obsFiles$ = dirListObs(path);
+  const dicoms$ = parseDicoms(obsFiles$);
+
+  const start = Date.now();
+  const dicoms = [];
+  dicoms$.subscribe(
+    function(dicom) {
+      dicoms.push(dicom);
+    },
+    function (err) {
+      subject.error(err);
+      console.log('Error: ' + err);
+    },
+    function () {
+      subject.next({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
+      subject.next(dicoms);
+      subject.complete();
+    }
+  );
+  return subject;
+};
+
 module.exports = {
   dicomDump: dicomDump,
-  dicomSort: dicomSort
+  parseDicoms: parseDicoms,
+  sortDicoms: sortDicoms
 };
+
+function dicom() {
+  return module.exports;
+}
+dicom.$inject = [];
+app.factory('dicom', dicom);

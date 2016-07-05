@@ -5,7 +5,7 @@ const {app, BrowserWindow} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 
-ipc.on('open-file-dialog', function (event) {
+ipc.on('open-file-dialog', function (event, tabletype) {
   const window = BrowserWindow.fromWebContents(event.sender);
   dialog.showOpenDialog(
     window,
