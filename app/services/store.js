@@ -3,6 +3,7 @@ const angular = require('angular');
 
 const app = angular.module('app');
 const Rx = require('rxjs/Rx');
+const {mapToSeriesRow} = require('../common/uiformatters');
 
 app.factory('organizerStore', organizerStore);
 
@@ -16,6 +17,16 @@ function organizerStore() {
     update: update,
     changed: changed
   };
+  changed.subscribe(
+    (action) => {
+      //jshint unused:false
+      if (typeof action.update.dicoms !== 'undefined'){
+        update({
+          seriesDicoms: mapToSeriesRow(action.update.dicoms)
+        });
+      }
+    }
+  );
   return service;
 
   function get() {
@@ -26,4 +37,5 @@ function organizerStore() {
     changed.next({state: state, update: update});
     return state;
   }
+
 }

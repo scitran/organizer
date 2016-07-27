@@ -11,8 +11,8 @@ seriesCtrl.$inject = ['$scope', 'organizerStore'];
 function seriesCtrl($scope, organizerStore) {
   /*jshint validthis: true */
   const vm = this;
+  vm.projects= [];
   vm.humanReadableSize = humanReadableSize;
-  updateTable(organizerStore.get().seriesDicoms);
 
   organizerStore.changed.subscribe(
     (action) => {
@@ -25,59 +25,34 @@ function seriesCtrl($scope, organizerStore) {
   );
 
   function updateTable(seriesDicoms) {
-    let sessions = new Map();
-    vm.dicoms = [];
+    let sessions = {};
     (seriesDicoms||[]).forEach((dicom) => {
-      if (!sessions.has(dicom.sessionUID)) {
-        sessions.set(
-          dicom.sessionUID,
-          {
-            acqMap: new Map(),
-            sessionTimestamp: dicom.sessionTimestamp,
-            patientID: dicom.patientID
-          }
-        );
+      if (!sessions.hasOwnProperty(dicom.sessionUID)) {
+        sessions[dicom.sessionUID] = {
+          acquisitions: {},
+          sessionTimestamp: dicom.sessionTimestamp,
+          patientID: dicom.patientID
+        };
       }
-      let {acqMap} = sessions.get(dicom.sessionUID);
-      if (!acqMap.has(dicom.acquisitionUID)) {
-        acqMap.set(
-          dicom.acquisitionUID,
-          {
-            acquisitionLabel: dicom.acquisitionLabel,
-            acquisitionTimestamp: dicom.acquisitionTimestamp,
-            count: 0,
-            size: 0
-          }
-        );
+      let {acquisitions} = sessions[dicom.sessionUID];
+      if (!acquisitions.hasOwnProperty(dicom.acquisitionUID)) {
+        acquisitions[dicom.acquisitionUID] = {
+          acquisitionLabel: dicom.acquisitionLabel,
+          acquisitionTimestamp: dicom.acquisitionTimestamp,
+          count: 0,
+          size: 0
+        };
       }
-      let acquisition = acqMap.get(dicom.acquisitionUID);
+      let acquisition = acquisitions[dicom.acquisitionUID];
       acquisition.count += 1;
       acquisition.size += dicom.size;
     });
-    let even = false;
-    sessions.forEach((session) => {
-      let first = true;
-      session.acqMap.forEach(
-        (v) => {
-          if (first) {
-            vm.dicoms.push({
-              session: session.sessionTimestamp,
-              patient: session.patientID,
-              acquisition: v,
-              even: even
-            });
-            first = false;
-          } else {
-            vm.dicoms.push({
-              session: '',
-              patient: '',
-              acquisition: v,
-              even: even
-            });
-          }
-        }
-      );
-      even = !even;
-    });
+    vm.projects = [
+      {
+        label: 'Untitled',
+        sessions: sessions
+      }
+    ];
+    vm.loaded = true;
   }
 }

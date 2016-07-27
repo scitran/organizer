@@ -3,7 +3,6 @@
 const angular = require('angular');
 const app = angular.module('app');
 const ipc = require('electron').ipcRenderer;
-const {mapToSeriesRow} = require('./common/uiformatters');
 
 app.controller('mainCtrl', mainCtrl);
 
@@ -19,18 +18,7 @@ function mainCtrl($state, organizerStore) {
   });
   console.log(organizerStore);
   vm.instances = organizerStore.get().instances;
-  organizerStore.changed.subscribe(
-    (action) => {
-      const update = action.update;
-      //jshint unused:false
-      if (typeof update.dicoms !== 'undefined'){
-        vm.dicoms = update.dicoms;
-        organizerStore.update({
-          seriesDicoms: mapToSeriesRow(vm.dicoms)
-        });
-      }
-    }
-  );
+
   function selectFolder() {
     ipc.send('open-file-dialog');
   }

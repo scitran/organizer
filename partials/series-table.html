@@ -1,29 +1,36 @@
-<div ng-show="series.dicoms.length">
-  <table >
-    <thead>
-      <tr>
-        <th>Session Timestamp</th>
-        <th>Patient ID</th>
-        <th>Acquisition Label</th>
-        <th>Acquisition Timestamp</th>
-        <th>Files</th>
-        <th>Size</th>
-        <th>Select</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="dicom in series.dicoms">
-        <td>{{dicom.session}}</td>
-        <td>{{dicom.patient}}</td>
-        <td>{{dicom.acquisition.acquisitionLabel}}</td>
-        <td>{{dicom.acquisition.acquisitionTimestamp}}</td>
-        <td>{{dicom.acquisition.count}}</td>
-        <td>{{series.humanReadableSize(dicom.acquisition.size)}}</td>
-        <td><input type="checkbox" name="name" ng-model="dicom.selected"></td>
-      </tr>
-    </tbody>
-  </table>
-  <button>
-    Upload
-  </button>
+<div ng-show="series.loaded">
+  <br>
+  <div ng-repeat="project in series.projects">
+    <div>
+      Project: <input type="text" ng-model="project.label">
+    </div>
+    <br>
+    <table>
+      <thead>
+        <tr>
+          <th>Session Timestamp</th>
+          <th>Patient ID</th>
+          <th>Acquisition Label</th>
+          <th>Acquisition Timestamp</th>
+          <th>Files</th>
+          <th>Size</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="(sessionUID, session) in project.sessions">
+        <tr ng-repeat="(acqUID, acquisition) in session.acquisitions">
+          <td>{{$first?session.sessionTimestamp:''}}</td>
+          <td>{{$first?session.patientID:''}}</td>
+          <td>{{acquisition.acquisitionLabel}}</td>
+          <td>{{acquisition.acquisitionTimestamp}}</td>
+          <td>{{acquisition.count}}</td>
+          <td>{{series.humanReadableSize(acquisition.size)}}</td>
+          <td><input type="checkbox" name="name" ng-model="acquisition.selected" ng-init="acquisition.selected=true"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button>
+      Upload
+    </button>
+  </div>
 </div>
