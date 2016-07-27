@@ -25,11 +25,15 @@
           <td>{{acquisition.acquisitionTimestamp}}</td>
           <td>{{acquisition.count}}</td>
           <td>{{series.humanReadableSize(acquisition.size)}}</td>
-          <td><input type="checkbox" name="name" ng-model="acquisition.selected" ng-init="acquisition.selected=true"></td>
+          <td><input type="checkbox" ng-model="acquisition.selected" ng-init="acquisition.selected=true"></td>
         </tr>
       </tbody>
     </table>
-    <button>
+    <div>
+      Upload destination <select ng-options="option for option in main.instances" ng-model="series.selectedInstance">
+      </select>
+    </div>
+    <button ng-click="series.upload()" ng-enabled="series.selectedInstance">
       Upload
     </button>
   </div>

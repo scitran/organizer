@@ -56,7 +56,7 @@ const parseDicoms = (files) => files.map(
     try {
       const parsed = parse(f);
       return {
-        name: f,
+        path: f,
         size: parsed.size,
         header: convertHeaderToObject(parsed.dp)
       };
@@ -94,6 +94,7 @@ const sortDicoms = function(path) {
     function () {
       subject.next({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
       subject.next(dicoms);
+      console.log(dicoms);
       subject.complete();
     }
   );

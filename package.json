@@ -42,7 +42,6 @@
   },
   "homepage": "https://github.com/scitran/organizer#readme",
   "devDependencies": {
-    "adm-zip": "^0.4.7",
     "angular": "^1.5.7",
     "angular-ui-router": "^0.3.1",
     "concurrently": "^2.0.0",
@@ -59,6 +58,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "archiver": "^1.0.1",
     "request": "^2.65.0"
   }
 }

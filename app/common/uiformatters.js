@@ -36,7 +36,7 @@ const mapToSeriesRow = (dicoms) => dicoms.map(
       acquisitionUID = seriesUID;
     }
     return {
-      name: dicom.name,
+      path: dicom.path,
       size: dicom.size,
       sessionUID: sessionUID,
       patientID: header.PatientID,
@@ -68,7 +68,7 @@ const mapToBidsRow = (dicoms) => dicoms.map(
       acquisitionUID = seriesUID;
     }
     return {
-      name: dicom.name,
+      path: dicom.path,
       size: dicom.size,
       sessionUID: sessionUID,
       patientID: header.PatientID,
