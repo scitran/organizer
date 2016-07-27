@@ -2,7 +2,7 @@
 
 const angular = require('angular');
 const app = angular.module('app');
-const {humanReadableSize} = require('./uiformatters');
+const {humanReadableSize} = require('./common/uiformatters');
 
 app.controller('bidsCtrl', bidsCtrl);
 

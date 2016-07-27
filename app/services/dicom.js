@@ -5,9 +5,9 @@ const app = angular.module('app');
 
 const fs = require('fs');
 const Rx = require('rxjs/Rx');
-const {dirListObs} = require('./util.js');
+const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
-const TAG_DICT = require('./dataDictionary.js').TAG_DICT;
+const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
 
 const parse = (filePath) => {
   const dicomFileAsBuffer = fs.readFileSync(filePath);

@@ -3,12 +3,19 @@ const angular = require('angular');
 const app = angular.module('app', [require('angular-ui-router')]);
 const ipc  = require('electron').ipcRenderer;
 
-require('./dicom.js');
-require('./store.js');
+require('./services/dicom.js');
+require('./services/store.js');
+require('./services/uploader.js');
 require('./main.controller.js');
 require('./main.series.controller.js');
 require('./main.bids.controller.js');
 document.addEventListener('DOMContentLoaded', boot);
+
+function boot() {
+  angular.bootstrap(document, ['app'], {
+    strictDi: false
+  });
+}
 
 app.config(function($stateProvider, $urlRouterProvider) {
   //
@@ -46,6 +53,7 @@ run.$inject = ['$state', 'dicom', 'organizerStore'];
 
 function run($state, dicom, organizerStore) {
   $state.go('main');
+  organizerStore.update({instances: ['docker.local.flywheel.io']});
   ipc.on('selected-directory', function (event, path) {
     const subject = dicom.sortDicoms(path[0]);
     subject.subscribe(
@@ -65,11 +73,5 @@ function run($state, dicom, organizerStore) {
         console.log('Rendering completed.');
       }
     );
-  });
-}
-
-function boot() {
-  angular.bootstrap(document, ['app'], {
-    strictDi: false
   });
 }

@@ -3,7 +3,7 @@
 const angular = require('angular');
 const app = angular.module('app');
 const ipc = require('electron').ipcRenderer;
-const {mapToSeriesRow} = require('./uiformatters');
+const {mapToSeriesRow} = require('./common/uiformatters');
 
 app.controller('mainCtrl', mainCtrl);
 
@@ -18,6 +18,7 @@ function mainCtrl($state, organizerStore) {
     updateView: updateView
   });
   console.log(organizerStore);
+  vm.instances = organizerStore.get().instances;
   organizerStore.changed.subscribe(
     (action) => {
       const update = action.update;
