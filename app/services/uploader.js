@@ -34,13 +34,18 @@ function organizerUpload() {
         console.log('error during zip process: ' + err);
         reject('error during zip process: ' + err);
       });
-      // var p = new Promise(function(resolve){
-      //   resolve()
-      // });
+      var p = new Promise(function(resolve){
+        resolve(archive);
+      });
       files.reduce(function(p, f) {
-        let rs = fs.readFileSync(f);
-        return archive.append(rs, {name: f.split('/').pop()});
-      }, archive).finalize();
+        return p.then(function(archive){
+          return readFilePromise(f).then(function(rs){
+            return archive.append(rs, {name: f.split('/').pop()});
+          });
+        });
+      }, p).then(function(archive){
+        archive.finalize();
+      });
     });
     return promise;
   }
@@ -74,4 +79,16 @@ function organizerUpload() {
       console.log(body);
     });
   }
+}
+
+function readFilePromise(f) {
+  return new Promise(function(resolve, reject){
+    fs.readFile(f, function(err, data){
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
 }
