@@ -84,7 +84,84 @@ const mapToBidsRow = (dicoms) => dicoms.map(
   }
 );
 
+const bidsLevels = {
+  'series': 'projects',
+  'projects': 'subjects',
+  'subjects': 'sessions',
+  'sessions': 'acquisitions'
+};
+
+const mapBidsFolderToSeries = (files) => {
+  // files.forEach(function(f){
+  //   console.log(f);
+  // });
+  let series = {
+    level: 'series',
+    projects: [],
+    path: ''
+  };
+  let pointers = {
+    '': series
+  };
+  return files.reduce(
+    function(pointers, f){
+      console.log(f.path);
+      let parentPointer = pointers[f.parent];
+      let pointer = createPointer(parentPointer.level, f);
+      console.log(parentPointer);
+      if (pointer.level) {
+        parentPointer[pointer.level].push(pointer);
+        pointers[f.path] = pointer;
+      } else {
+        parentPointer.files.push(pointer);
+      }
+      return pointers;
+    }, pointers)
+    .map(function(pointers){
+      let bidsSeries = pointers[""];
+      let series = {projects: []};
+      for (let p of bidsSeries.projects) {
+        let project = Object.assign({}, p, {
+          sessions: []
+        });
+        delete project['subjects'];
+        series.projects.push(project);
+        for (let sbj of p.subjects) {
+          let subject = Object.assign({}, sbj);
+          delete subject['sessions'];
+          for (let ses of sbj.sessions) {
+            let session = Object.assign({}, ses,
+              {subject: subject}
+            );
+            project.sessions.push(session);
+          }
+        }
+      }
+      return series;
+    });
+  function createPointer(parentPointerLevel, f){
+    if (f.isFolder) {
+      let pointer = {
+        level: bidsLevels[parentPointerLevel],
+        path: f.path,
+        label: f.path.split('/').pop(),
+        files: []
+      };
+      let childrenLevel = bidsLevels[pointer.level];
+      if (childrenLevel) {
+        pointer[childrenLevel] = [];
+      }
+      return pointer;
+    } else {
+      return {
+        path: f.path
+      };
+    }
+  }
+};
+
 module.exports = {
+  mapBidsFolderToSeries: mapBidsFolderToSeries,
   mapToBidsRow: mapToBidsRow,
   mapToSeriesRow: mapToSeriesRow,
   humanReadableSize: humanReadableSize

@@ -1,0 +1,42 @@
+<div ng-show="sortedSeries.loaded">
+  <br>
+  <div ng-repeat="project in sortedSeries.projects">
+    <div>
+      Project: <input type="text" ng-model="project.label">
+    </div>
+    <br>
+    <table>
+      <thead>
+        <tr>
+          <th>Session Label</th>
+          <th>Session files</th>
+          <th>Patient ID</th>
+          <th>Subject Files</th>
+          <th>Acquisition Label</th>
+          <th>Files</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="session in project.sessions">
+        <tr ng-repeat="acquisition in session.acquisitions">
+          <td>{{$first?session.label:''}}</td>
+          <td>{{$first?session.files.length:''}}</td>
+          <td>{{$first?session.subject.label:''}}</td>
+          <td>{{$first?session.subject.files.length:''}}</td>
+          <td>{{acquisition.label}}</td>
+          <td>{{acquisition.files.length}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      Upload destination
+      <select
+        ng-options="option for option in main.instances"
+        ng-model="sortedSeries.selectedInstance"
+        ng-change="sortedSeries.initializeInstance()">
+      </select>
+    </div>
+    <button ng-click="sortedSeries.upload()" ng-enabled="sortedSeries.selectedInstance">
+      Upload
+    </button>
+  </div>
+</div>

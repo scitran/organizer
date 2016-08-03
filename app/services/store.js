@@ -2,7 +2,7 @@
 const angular = require('angular');
 
 const app = angular.module('app');
-const Rx = require('rxjs/Rx');
+const Rx = require('rx');
 const {mapToSeriesRow} = require('../common/uiformatters');
 
 app.factory('organizerStore', organizerStore);
@@ -34,7 +34,7 @@ function organizerStore() {
   }
   function update(update) {
     Object.assign(state, update);
-    changed.next({state: state, update: update});
+    changed.onNext({state: state, update: update});
     return state;
   }
 

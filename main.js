@@ -5,13 +5,14 @@ const {app, BrowserWindow} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 
-ipc.on('open-file-dialog', function (event) {
+ipc.on('open-file-dialog', function (event, arg) {
   const window = BrowserWindow.fromWebContents(event.sender);
   dialog.showOpenDialog(
     window,
     { properties: [ 'openDirectory' ]},
     function (files) {
-      if (files) event.sender.send('selected-directory', files);
+      const channel = (arg === 'bids-to-series')?'selected-bids-directory':'selected-directory';
+      if (files) event.sender.send(channel, files);
     }
   );
 });

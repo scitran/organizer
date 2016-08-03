@@ -5,20 +5,27 @@ const fs = require('fs');
 const archiver = require('archiver');
 
 const app = angular.module('app');
-//const Rx = require('rxjs/Rx');
-const request = require('request');
 
 app.factory('organizerUpload', organizerUpload);
 
-organizerUpload.$inject = [];
+organizerUpload.$inject = ['apiQueues'];
 
-function organizerUpload() {
+function organizerUpload(apiQueues) {
   const service = {
     upload: upload,
-    createZipBuffer: createZipBuffer
+    createZipBuffer: createZipBuffer,
+    testcall: testcall
   };
   return service;
-
+  function testcall(instance) {
+    var options = {
+      url: `https://${instance}:8443/api`,
+      agentOptions: {
+        rejectUnauthorized: false
+      }
+    };
+    return apiQueues.append({options: options});
+  }
   function createZipBuffer(files) {
     var promise = new Promise(function(resolve, reject){
       let archive = archiver.create('zip', {});
@@ -49,33 +56,34 @@ function organizerUpload() {
     });
     return promise;
   }
-  function upload(instance, name, zip, metadata) {
+  function upload(instance, files, metadata) {
     var formData = {
-      metadata: metadata,
-      file: {
-        value: zip,
+      metadata: metadata
+    };
+    for (let i = 0; i < files.length; i++) {
+      formData['file' + i] = {
+        value: files[i].content,
         options: {
-          filename: name
+          filename: files[i].name
+        }
+      };
+    }
+    let message = {
+      options: {
+        method: 'POST',
+        url: `https://${instance}:8443/api/upload/label`,
+        formData: formData,
+        headers: {
+          'X-SciTran-Auth':  'change-me',
+          'X-Scitran-Name':  'SciTran-Drone-Reaper',
+          'X-Scitran-Method':'label-upload'
+        },
+        agentOptions: {
+          rejectUnauthorized: false
         }
       }
     };
-    var options = {
-      url: `https://${instance}:8443/api/upload/label`,
-      formData: formData,
-      headers: {
-        'X-SciTran-Auth':  'change-me',
-        'X-Scitran-Name':  'SciTran-Drone-Reaper',
-        'X-Scitran-Method':'label-upload'
-      },
-      agentOptions: {
-        rejectUnauthorized: false
-      }
-    };
-    return request.post(options, function(error, response, body){
-      if (error){
-        console.log(error);
-        return;
-      }
+    return apiQueues.append(message).then(function(body){
       console.log(body);
     });
   }

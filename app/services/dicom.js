@@ -4,7 +4,7 @@ const angular = require('angular');
 const app = angular.module('app');
 
 const fs = require('fs');
-const Rx = require('rxjs/Rx');
+const Rx = require('rx');
 const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
@@ -76,7 +76,7 @@ const sortDicoms = function(path) {
   try {
     fs.accessSync(path);
   } catch (exc) {
-    subject.error(path + ' is not accessible on the filesystem.');
+    subject.onError(path + ' is not accessible on the filesystem.');
   }
   const obsFiles$ = dirListObs(path);
   const dicoms$ = parseDicoms(obsFiles$);
@@ -88,14 +88,14 @@ const sortDicoms = function(path) {
       dicoms.push(dicom);
     },
     function (err) {
-      subject.error(err);
+      subject.onError(err);
       console.log('Error: ' + err);
     },
     function () {
-      subject.next({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
-      subject.next(dicoms);
+      subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
+      subject.onNext(dicoms);
       console.log(dicoms);
-      subject.complete();
+      subject.onCompleted();
     }
   );
   return subject;

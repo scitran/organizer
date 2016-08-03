@@ -1,6 +1,6 @@
 'use strict';
 const fs = require('fs');
-const Rx = require('rxjs/Rx');
+const Rx = require('rx');
 
 const dirListObs = function(path) {
   const _helperObs = path =>
@@ -9,10 +9,10 @@ const dirListObs = function(path) {
         if (stat.isDirectory()) {
           fs.readdir(path, (err, files) => {
             files.forEach(f => observer.next(path + '/' + f));
-            observer.complete();
+            observer.onCompleted();
           });
         } else {
-          observer.complete();
+          observer.onCompleted();
         }
 
       });
@@ -22,6 +22,41 @@ const dirListObs = function(path) {
     .expand(_helperObs);
 };
 
+const dirListObsNew = function(path) {
+  const _helperObs = elem =>
+    Rx.Observable.create(function(observer){
+      if (elem.isFolder) {
+        fs.readdir(elem.path, (err, files) => {
+          const p = Promise.resolve();
+          const final = files.reduce((p, f) => {
+            const path = elem.path + '/' + f;
+            return p.then(function() {
+              return new Promise(function(resolve){
+                fs.stat(path, (err, stat) => {
+                  observer.next({
+                    path: path,
+                    isFolder: stat.isDirectory(),
+                    parent: elem.path
+                  });
+                  resolve();
+                });
+              });
+            });
+          }, p);
+          final.then(function(){
+            observer.onCompleted();
+          });
+        });
+      } else {
+        observer.onCompleted();
+      }
+    });
+  return Rx.Observable
+    .of({path:path, isFolder:true, parent: ''})
+    .expand(_helperObs);
+};
+
 module.exports = {
-  dirListObs: dirListObs
+  dirListObs: dirListObs,
+  dirListObsNew: dirListObsNew
 };

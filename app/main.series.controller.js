@@ -97,8 +97,11 @@ function seriesCtrl($scope, organizerStore, organizerUpload) {
             ));
             const zipPromise = organizerUpload.createZipBuffer(acquisition.filepaths, metadata);
             zipPromise.then(function(zip) {
-              const answer = organizerUpload.upload(vm.selectedInstance, filename, zip, metadata);
-              console.log(answer);
+              let files = {
+                content: zip,
+                name: filename
+              };
+              organizerUpload.upload(vm.selectedInstance, files, metadata);
             });
 
           }

@@ -11,7 +11,7 @@ mainCtrl.$inject = ['$state', 'organizerStore'];
 function mainCtrl($state, organizerStore) {
   /*jshint validthis: true */
   const vm = this;
-  vm.viewType = 'series';
+  vm.viewType = 'bids-to-series';
   Object.assign(vm, {
     selectFolder: selectFolder,
     updateView: updateView
@@ -20,7 +20,7 @@ function mainCtrl($state, organizerStore) {
   vm.instances = organizerStore.get().instances;
 
   function selectFolder() {
-    ipc.send('open-file-dialog');
+    ipc.send('open-file-dialog', vm.viewType);
   }
   function updateView() {
     $state.go('main.' + vm.viewType);
