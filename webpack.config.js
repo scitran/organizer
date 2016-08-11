@@ -20,7 +20,9 @@ module.exports = {
     ],
     loaders: [
       { test: /\.json$/, loader: 'json-loader' }
-    ]
+    ],
+    // workaround to solve https://github.com/webpack/webpack/issues/138
+    noParse: /node_modules\/json-schema\/lib\/validate\.js/
   },
   eslint: {
     failOnWarning: false,
