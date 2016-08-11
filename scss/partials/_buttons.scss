@@ -41,6 +41,14 @@
 		&:hover {background:lighten($darkblue, 3%);}
 	}
 
+	// Secondary Buttons
+	&.secondary {
+		background:$orange;
+		color:#FFF;
+		border-color:$orangeborder;
+		&:hover {background:lighten($orange, 5%);}
+	}
+
 	// Large Buttons
 	&.large {
 		padding:15px 20px 17px;
