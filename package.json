@@ -59,6 +59,8 @@
   },
   "dependencies": {
     "archiver": "^1.0.1",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
     "request": "^2.65.0"
   }
 }

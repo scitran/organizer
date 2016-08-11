@@ -1,19 +1,53 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Organizer</title>
-  </head>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Organizer</title>
+	<link rel="stylesheet" href="css/global.css">
+</head>
+<body>
 
-  <body>
-    <div ui-view></div>
-  </body>
-  <!--script src="node_modules/angular/angular.min.js"/-->
-  <script>
-    // require("./renderer.js")
-    (function() {
-      const script = document.createElement('script');
-      script.src = (process.env.HOT) ? 'http://localhost:8080/build/app.bundle.js' : 'build/app.bundle.js';
-      document.write(script.outerHTML);
-    }());
-  </script>
+	<!-- Header -->
+	<header>
+		<img src="img/flywheelLogo.svg" class="logo">
+		<!-- <img src="img/scitranLogo.png" class="logo"> -->
+		<div class="progress">
+			<a class="active"><span class="fa fa-check"></span>Upload Data</a>
+			<a href=""><span class="fa fa-circle-o"></span>Select Format</a>
+			<a href=""><span class="fa fa-circle-o"></span>Organize Data</a>
+			<a href=""><span class="fa fa-circle-o"></span>Save &amp; Upload</a>
+		</div>
+	</header>
+
+	<!-- Upload -->
+	<section class="upload">
+		<div class="center">
+			<h1>Let's get organized.</h1>
+			<a class="button primary large">
+				<strong>Click here to select files</strong>
+				<small>Must be DICOM or NiFTi files only</small>
+			</a>
+			<img src="img/bg.png" class="dots">
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer>
+		<a class="button disabled">Go Back</a>
+		<a href="" class="button primary"><strong>Next Step:</strong> <em>Select Format</em></a>
+	</footer>
+
+	<!-- View -->
+	<!-- <div ui-view></div> -->
+
+	<!-- script src="node_modules/angular/angular.min.js"/ -->
+	<script>
+		// require("./renderer.js")
+			(function() {
+			const script = document.createElement('script');
+			script.src = (process.env.HOT) ? 'http://localhost:8080/build/app.bundle.js' : 'build/app.bundle.js';
+			document.write(script.outerHTML);
+		}());
+	</script>
+</body>
 </html>

@@ -1,0 +1,15 @@
+// Partials
+@import '../scss/partials/reset';
+@import '../scss/partials/config';
+@import '../scss/partials/mixins';
+@import '../scss/partials/general';
+@import '../scss/partials/buttons';
+@import '../scss/partials/typography';
+
+// Modules
+@import '../scss/modules/header';
+@import '../scss/modules/footer';
+@import '../scss/modules/section-upload';
+
+// Vendor
+@import 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css';

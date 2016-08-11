@@ -1,0 +1,45 @@
+// General
+* {
+	margin:0;
+	padding:0;
+	outline:none;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
+html {
+	height:100%;
+	background:#FFF;
+	font-family:$font-main;
+	padding:60px 0 60px 0;
+}
+
+body {height:100%;}
+
+*,
+html,
+input, {
+	-webkit-font-smoothing:antialiased !important;
+}
+
+// CSS3 Clearfix
+.clear:before,
+.clear:after {
+	content:"";
+	display:table;
+}
+
+.clear:after {
+	clear:both;
+}
+
+// Main Container
+.container {
+	width:1140px;
+	margin:0 auto;
+	@include fit(large) {width:960px;}
+	@include fit(medium) {width:700px;}
+	@include fit(small) {width:500px;}
+	@include fit(tiny) {width:300px;}
+}
