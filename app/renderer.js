@@ -35,6 +35,31 @@ app.config(function($stateProvider, $urlRouterProvider) {
   };
   $stateProvider
     .state('main', main)
+    .state('main.load', {
+      url: '/main/load',
+      parent: main,
+      templateUrl: 'partials/load.html'
+    })
+    .state('main.format', {
+      url: '/main/format',
+      parent: main,
+      templateUrl: 'partials/format.html'
+    })
+    .state('main.organize', {
+      url: '/main/organize',
+      parent: main,
+      templateUrl: 'partials/organize.html'
+    })
+    .state('main.save', {
+      url: '/main/save',
+      parent: main,
+      templateUrl: 'partials/save.html'
+    })
+    .state('main.upload', {
+      url: '/main/upload',
+      parent: main,
+      templateUrl: 'partials/upload.html'
+    })
     .state('main.series', {
       url: '/main/series',
       parent: main,

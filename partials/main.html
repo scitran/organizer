@@ -1,4 +1,4 @@
-<div className="padded-more">
+<!-- <div className="padded-more">
   <div className="start-button">
     <button className="btn btn-positive btn-large" ng-click="main.selectFolder()">Show files in folder</button>
   </div>
@@ -18,4 +18,25 @@
   </div>
   <div ui-view>
   </div>
+</div> -->
+<div class="full-view">
+  <!-- Header -->
+  <header>
+    <img src="img/flywheelLogo.svg" class="logo">
+    <!-- <img src="img/scitranLogo.png" class="logo"> -->
+    <div class="progress">
+      <a ng-class="{active: (main.viewType==='load')}" ng-click="main.updateView('load')"><span class="fa fa-check"></span>Upload Data</a>
+      <a ng-class="{active: (main.viewType==='format')}" ng-click="main.updateView('format')"><span class="fa fa-circle-o"></span>Select Format</a>
+      <a ng-class="{active: (main.viewType==='organize')}" ng-click="main.updateView('organize')"><span class="fa fa-circle-o"></span>Organize Data</a>
+      <a ng-class="{active: (main.viewType==='save')}" ng-click="main.updateView('save')"><span class="fa fa-circle-o"></span>Save Data</a>
+      <a ng-class="{active: (main.viewType==='upload')}" ng-click="main.updateView('upload')"><span class="fa fa-circle-o"></span>Upload Data</a>
+    </div>
+  </header>
+
+<div ui-view class="full-view"></div>
+
+  <footer>
+    <a class="button disabled">Go Back</a>
+    <a href="" class="button primary"><strong>Next Step:</strong> <em>Select Format</em></a>
+  </footer>
 </div>
