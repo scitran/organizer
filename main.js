@@ -11,7 +11,7 @@ ipc.on('open-file-dialog', function (event, arg) {
     window,
     { properties: [ 'openDirectory' ]},
     function (files) {
-      const channel = (arg === 'bids-to-series')?'selected-bids-directory':'selected-directory';
+      const channel = (arg === 'main.bids-to-series')?'selected-bids-directory':'selected-directory';
       if (files) event.sender.send(channel, files);
     }
   );
@@ -22,7 +22,7 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1200, height: 900});
+  mainWindow = new BrowserWindow({width: 1600, height: 900});
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');

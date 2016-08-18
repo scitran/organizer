@@ -26,6 +26,8 @@ section.format {
 		text-align:left;
 		box-shadow:0px 2px 5px rgba(0, 0, 0, .05);
 		&.half {width:340px;}
+		&.selected {box-shadow: 0px 2px 5px $darkblue;}
+		&:hover {cursor:pointer;}
 	}
 
 	// Data Format

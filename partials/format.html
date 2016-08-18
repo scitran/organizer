@@ -1,27 +1,28 @@
 <section class="format">
   <div class="center">
     <h1>Select your format</h1>
-    <div class="card half">
+    <div class="card half" ng-click="format.set('scitran')" ng-class="{selected: format.format === 'scitran'}">
       <h2>SciTran</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus eveniet error suscipit voluptatum, commodi.</p>
       <h2>Data Format</h2>
       <div class="data-format">
-        <span class="level-1">Project</span>
-        <span class="level-2">Project</span>
-        <span class="level-3">Project</span>
+        <span class="level-1">Projects</span>
+        <span class="level-2">Sessions</span>
+        <span class="level-3">Acquisitions</span>
       </div>
       <a href="" class="button primary">Select SciTran Format</a>
     </div>
-    <div class="card half">
-      <h2>SciTran</h2>
+    <div class="card half" ng-click="format.set('bids')" ng-class="{selected: format.format === 'bids'}">
+      <h2>BIDS</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Necessitatibus eveniet error suscipit voluptatum, commodi.</p>
       <h2>Data Format</h2>
       <div class="data-format">
         <span class="level-1">Project</span>
-        <span class="level-2">Project</span>
-        <span class="level-3">Project</span>
+        <span class="level-2">Subjects</span>
+        <span class="level-3">Sessions</span>
+        <span class="level-4">Acquisitions</span>
       </div>
-      <a href="" class="button primary">Select SciTran Format</a>
+      <a href="" class="button primary">Select BIDS Format</a>
     </div>
   </div>
 </section>
