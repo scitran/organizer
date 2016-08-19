@@ -9,6 +9,7 @@ app.controller('loadCtrl', loadCtrl);
 loadCtrl.$inject = ['$state', 'organizerStore', 'dicom'];
 
 function loadCtrl($state, organizerStore, dicom) {
+  console.log('boom');
   /*jshint validthis: true */
   const vm = this;
   vm.selectFolder = selectFolder;

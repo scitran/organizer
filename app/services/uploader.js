@@ -71,7 +71,7 @@ function organizerUpload(apiQueues) {
     let message = {
       options: {
         method: 'POST',
-        url: `https://${instance}:8443/api/upload/label`,
+        url: `https://${instance}/api/upload/label`,
         formData: formData,
         headers: {
           'X-SciTran-Auth':  'change-me',

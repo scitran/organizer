@@ -8,6 +8,7 @@ app.controller('formatCtrl', formatCtrl);
 formatCtrl.$inject = ['$state', 'organizerStore'];
 
 function formatCtrl($state, organizerStore){
+  /*jshint validthis: true */
   const vm = this;
   vm.set = set;
 

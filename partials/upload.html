@@ -6,14 +6,14 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum reiciendis tempora dolorem voluptas, quidem temporibus earum totam optio.</p>
       <div class="form-group">
         <label for="url">Flywheel URL</label>
-        <input type="text" id="url">
+        <input type="text" id="url" ng-model="upload.url">
       </div>
       <div class="form-group">
         <label for="url">Flywheel Login</label>
         <a href="" class="button primary">Sign in with Google</a>
       </div>
       <div class="margin-40"></div>
-      <a href="" class="button secondary">Upload to Flwheel.io</a>
+      <a href="" class="button secondary" ng-click="upload.upload()">Upload to Flwheel.io</a>
     </div>
   </div>
 </section>

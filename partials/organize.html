@@ -1,7 +1,7 @@
 <section class="organize">
   <div class="list">
-    <div class="toggle">
-      <h3><span class="fa fa-sort-up"></span>Project Name<span class="fa fa-pencil"></span></h3>
+    <div class="toggle" ng-repeat="project in organize.projects">
+      <h3><span class="fa fa-sort-up"></span>{{project.label}}<span class="fa fa-pencil"></span></h3>
       <div class="content">
         <table class="clickable">
           <thead>
@@ -9,53 +9,35 @@
             <th>Session Name</th>
             <th width="200"># of Aquisitions</th>
           </thead>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td><span class="fa fa-sort-down"></span>Example</td>
-            <td>Example</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td><span class="fa fa-sort-down"></span>Example</td>
-            <td>Example</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td><span class="fa fa-sort-up"></span>Example</td>
-            <td>Example</td>
-            <tr class="no-click">
+          <tbody ng-repeat="(sessionUID, session) in project.sessions">
+            <tr>
+              <td><input type="checkbox"></td>
+              <td ng-click="session.show=!session.show"><span class="fa fa-sort-down"></span>{{session.sessionTimestamp}}</td>
+              <td>{{session.acquisitions | objLength}}</td>
+            </tr>
+            <tr class="no-click" ng-if="session.show">
               <td colspan="3">
                 <table>
                   <thead>
                     <th width="20"><input type="checkbox"></th>
-                    <th>Aquisition Name</th>
-                    <th>File Type</th>
+                    <th>Acquisition Name</th>
+                    <th>Acquisition Count</th>
                     <th width="200">Actions</th>
                   </thead>
-                  <tr>
+                  <tr ng-repeat="(acqUID, acquisition) in session.acquisitions">
                     <td width="20"><input type="checkbox"></td>
-                    <td>fMRI_Example_1</td>
-                    <td>DICOM</td>
+                    <td>{{acquisition.acquisitionLabel}}</td>
+                    <td>{{acquisition.count}}</td>
                     <td><span class="fa fa-download"></span></td>
                   </tr>
                 </table>
               </td>
             </tr>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td><span class="fa fa-sort-down"></span>Example</td>
-            <td>Example</td>
-          </tr>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td><span class="fa fa-sort-down"></span>Example</td>
-            <td>Example</td>
-          </tr>
+          </tbody>
         </table>
       </div>
     </div>
-    <div class="toggle">
+    <!-- <div class="toggle">
       <h3><span class="fa fa-sort-down"></span>Another Project Name<span class="fa fa-pencil"></span></h3>
     </div>
     <div class="toggle">
@@ -66,7 +48,7 @@
     </div>
     <div class="toggle">
       <h3><span class="fa fa-sort-down"></span>Last But Not Least<span class="fa fa-pencil"></span></h3>
-    </div>
+    </div> -->
   </div>
   <div class="sidebar">
     <h2>Filter &amp; Sort</h2>
