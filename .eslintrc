@@ -11,14 +11,12 @@
         "modules": true
     },
     "plugins": [
-      "react"
     ],
 
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "extends": ["eslint:recommended"],
 
     "rules": {
       "indent": ["error", 2],
-      "no-console": 1,
-      "react/prop-types": [1, {}]
+      "no-console": 1
     }
 }
