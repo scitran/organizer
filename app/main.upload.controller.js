@@ -5,9 +5,9 @@ const app = angular.module('app');
 
 app.controller('uploadCtrl', uploadCtrl);
 
-uploadCtrl.$inject = ['organizerStore', 'organizerUpload'];
+uploadCtrl.$inject = ['$rootScope', '$timeout', 'organizerStore', 'organizerUpload'];
 
-function uploadCtrl(organizerStore, organizerUpload){
+function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   /*jshint validthis: true */
   const vm = this;
 
@@ -30,7 +30,11 @@ function uploadCtrl(organizerStore, organizerUpload){
             }
           }
         };
-        Object.keys(session.acquisitions).forEach((acquisitionUID) => {
+        const acqKeys = Object.keys(session.acquisitions);
+        const progress = organizerStore.get().progress;
+        const size = organizerStore.get().loaded.size;
+        progress.size = 0;
+        acqKeys.forEach((acquisitionUID) => {
           const acquisition = session.acquisitions[acquisitionUID];
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
@@ -54,11 +58,21 @@ function uploadCtrl(organizerStore, organizerUpload){
               content: zip,
               name: filename
             };
-            organizerUpload.upload(vm.url, files, metadata);
+            organizerUpload.upload(vm.url, files, metadata).then(()=>{
+              progress.size += acquisition.size;
+              progress.state = 100.0 * progress.size/size;
+              if (progress.state >= 100.0){
+                progress.size = 0;
+                $timeout(function(){
+                  progress.state = 0;
+                  $rootScope.$apply();
+                }, 1000);
+              }
+              $rootScope.$apply();
+            });
           });
         });
       });
     });
-
   };
 }

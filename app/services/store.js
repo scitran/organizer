@@ -10,7 +10,14 @@ app.factory('organizerStore', organizerStore);
 organizerStore.$inject = [];
 
 function organizerStore() {
-  const state = {};
+  const state = {
+    progress: {
+      state: 0
+    },
+    loaded: {
+      size: 0
+    }
+  };
   const changed = new Rx.Subject();
   const service = {
     get: get,

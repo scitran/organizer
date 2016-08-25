@@ -22,8 +22,7 @@
 <div class="full-view">
   <!-- Header -->
   <header>
-	<img src="img/flywheelLogo.svg" class="logo">
-	<!-- <img src="img/scitranLogo.png" class="logo"> -->
+  <img src="img/scitranLogo.png" class="logo">
 	<div class="progress">
 	  <a ng-class="{active: $state.is('main.load')}" ng-click="$state.go('main.load')"><span class="fa fa-check"></span>Load Data</a>
 	  <a ng-class="{active: $state.is('main.format')}" ng-click="$state.go('main.format')"><span class="fa fa-circle-o"></span>Select Format</a>
@@ -37,8 +36,8 @@
 
 	<footer>
 		<!-- Progress Bar -->
-		<div class="progress-bar">
-			<div class="progress" style="width:30%;"></div>
+		<div class="progress-bar" ng-show="main.progress.state">
+			<div class="progress" ng-style="{width: main.progress.state + '%'}"></div>
 		</div>
 
 		<!-- Buttons -->
