@@ -103,27 +103,6 @@ function run($rootScope, $state, $stateParams, bids, dicom, organizerStore) {
   $state.go('main');
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
-  organizerStore.update({instances: ['docker.local.flywheel.io']});
-  // ipc.on('selected-directory', function (event, path) {
-  //   const subject = dicom.sortDicoms(path[0]);
-  //   subject.subscribe(
-  //     (dicomsOrMessage) => {
-  //       if (dicomsOrMessage.message !== undefined){
-  //         console.log(dicomsOrMessage.message);
-  //         organizerStore.update({message: dicomsOrMessage});
-  //       } else {
-  //         organizerStore.update({dicoms: dicomsOrMessage});
-  //       }
-  //     },
-  //     (err) => {
-  //       console.err(err);
-  //       organizerStore.update({error: err});
-  //     },
-  //     () => {
-  //       console.log('Processing completed.');
-  //     }
-  //   );
-  // });
   ipc.on('selected-bids-directory', function(event, path){
     bids.bidsToSeries(path[0]).subscribe(
       function(sortedSeries) {
