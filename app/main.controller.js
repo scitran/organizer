@@ -5,12 +5,22 @@ const app = angular.module('app');
 
 app.controller('mainCtrl', mainCtrl);
 
-mainCtrl.$inject = ['$state', 'organizerStore'];
+mainCtrl.$inject = ['$rootScope', 'steps', 'organizerStore'];
 
-function mainCtrl($state, organizerStore){
+function mainCtrl($rootScope, steps, organizerStore){
   /*jshint validthis: true */
   /*jshint validthis: true */
   const vm = this;
-  $state.go('main.load');
+  $rootScope.steps = steps;
+  steps.configure('main.load',{
+    'main.load': {
+      next: () => 'main.organize',
+      isActive: true
+    },
+    'main.organize': {
+      next: () => 'main.upload'
+    },
+    'main.upload': {}
+  });
   vm.progress = organizerStore.get().progress;
 }

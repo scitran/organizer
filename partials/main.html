@@ -24,11 +24,17 @@
   <header>
   <img src="img/scitranLogo.png" class="logo">
 	<div class="progress">
-	  <a ng-class="{active: $state.is('main.load')}" ng-click="$state.go('main.load')"><span class="fa fa-check"></span>Load Data</a>
-	  <a ng-class="{active: $state.is('main.format')}" ng-click="$state.go('main.format')"><span class="fa fa-circle-o"></span>Select Format</a>
-	  <a ng-class="{active: $state.is('main.organize')}" ng-click="$state.go('main.organize')"><span class="fa fa-circle-o"></span>Organize Data</a>
-	  <a ng-class="{active: $state.is('main.save')}" ng-click="$state.go('main.save')"><span class="fa fa-circle-o"></span>Save Data</a>
-	  <a ng-class="{active: $state.is('main.upload')}" ng-click="$state.go('main.upload')"><span class="fa fa-circle-o"></span>Upload Data</a>
+	  <a ng-class="{active: steps.isActive('main.load')}" ng-click="steps.go('main.load')">
+      <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.load'), 'fa-check': !steps.isActive('main.load')}"></span>Load Data
+    </a>
+	  <!-- <a ng-class="{active: $state.is('main.format')}" ng-click="$state.go('main.format')"><span class="fa fa-circle-o"></span>Select Format</a> -->
+	  <a ng-class="{active: steps.isActive('main.organize')}" ng-show="steps.isComplete('main.organize') || steps.isActive('main.organize')" ng-click="steps.go('main.organize')">
+      <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.organize'), 'fa-check': !steps.isActive('main.organize')}"></span>Organize Data
+    </a>
+	  <!-- <a ng-class="{active: $state.is('main.save')}" ng-click="$state.go('main.save')"><span class="fa fa-circle-o"></span>Save Data</a> -->
+	  <a ng-class="{active: steps.isActive('main.upload')}" ng-click="steps.go('main.upload')" ng-show="steps.isComplete('main.upload') || steps.isActive('main.upload')">
+      <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.upload'), 'fa-check': !steps.isActive('main.upload')}"></span>Load DataUpload Data
+    </a>
 	</div>
   </header>
 
@@ -41,7 +47,7 @@
 		</div>
 
 		<!-- Buttons -->
-		<a class="button disabled">Go Back</a>
-		<a href="" class="button primary"><strong>Next Step:</strong> <em>Select Format</em></a>
+		<a class="button" ng-show="steps.hasPrev()" ng-click="steps.back()">Go Back</a>
+		<button class="button primary" ng-disabled="!steps.isComplete(steps.current())" ng-show="steps.hasNext()" ng-click="steps.next()"><strong>Next Step</strong></button>
 	</footer>
 </div>

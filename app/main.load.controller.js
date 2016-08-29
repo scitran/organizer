@@ -6,16 +6,16 @@ const ipc = require('electron').ipcRenderer;
 
 app.controller('loadCtrl', loadCtrl);
 
-loadCtrl.$inject = ['$state', 'organizerStore', 'dicom'];
+loadCtrl.$inject = ['steps', 'organizerStore', 'dicom'];
 
-function loadCtrl($state, organizerStore, dicom) {
+function loadCtrl(steps, organizerStore, dicom) {
   console.log('boom');
   /*jshint validthis: true */
   const vm = this;
   vm.selectFolder = selectFolder;
   function selectFolder() {
-    ipc.send('open-file-dialog', $state.current.name);
-    console.log($state.current.name);
+    ipc.send('open-file-dialog', steps.current());
+    console.log(steps.current());
     ipc.once('selected-directory', function (event, path) {
       const subject = dicom.sortDicoms(path[0]);
       subject.subscribe(
@@ -25,7 +25,8 @@ function loadCtrl($state, organizerStore, dicom) {
             organizerStore.update({message: dicomsOrMessage});
           } else {
             organizerStore.update({dicoms: dicomsOrMessage});
-            $state.go('main.format');
+            steps.complete();
+            steps.next();
           }
         },
         (err) => {
