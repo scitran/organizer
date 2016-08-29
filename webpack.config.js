@@ -12,7 +12,7 @@ module.exports = {
   module: {
     preLoaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.js$/,
         loaders: ['eslint'],
         // define an include so we check just the files we need
         exclude: /node_modules/
@@ -29,7 +29,7 @@ module.exports = {
     failOnError: true
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js']
   },
   target: 'electron-renderer'
 };

@@ -25,7 +25,7 @@ function loadCtrl($state, organizerStore, dicom) {
             organizerStore.update({message: dicomsOrMessage});
           } else {
             organizerStore.update({dicoms: dicomsOrMessage});
-            $state.go('main.format')
+            $state.go('main.format');
           }
         },
         (err) => {
