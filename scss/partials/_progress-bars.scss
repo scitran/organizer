@@ -1,0 +1,20 @@
+// Progress Bars
+.progress-bar {
+	display:block;
+	width:100%;
+	height:12px;
+	border-radius:20px;
+	background:rgba(0, 0, 0, .08);
+	border:1px solid rgba(0, 0, 0, .05);
+	transition:all 0.12s ease-in-out;
+
+	// Progress
+	.progress {
+		display:block;
+		height:12px;
+		border-radius:20px;
+		background:$darkblue;
+		position:relative;
+		top:-1px;
+	}
+}

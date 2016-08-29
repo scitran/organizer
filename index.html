@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Organizer</title>
-  </head>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Organizer</title>
+	<link rel="stylesheet" href="css/global.css">
+</head>
+<body>
+	<div ui-view class="full-view"></div>
 
-  <body>
-    <div ui-view></div>
-  </body>
-  <!--script src="node_modules/angular/angular.min.js"/-->
-  <script>
-    // require("./renderer.js")
-    (function() {
-      const script = document.createElement('script');
-      script.src = (process.env.HOT) ? 'http://localhost:8080/build/app.bundle.js' : 'build/app.bundle.js';
-      document.write(script.outerHTML);
-    }());
-  </script>
+	<!-- script src="node_modules/angular/angular.min.js"/ -->
+	<script>
+			(function() {
+			const script = document.createElement('script');
+			script.src = (process.env.HOT) ? 'http://localhost:8080/build/app.bundle.js' : 'build/app.bundle.js';
+			document.write(script.outerHTML);
+		}());
+	</script>
+</body>
 </html>

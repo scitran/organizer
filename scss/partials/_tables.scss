@@ -1,0 +1,99 @@
+// Tables
+table {
+	width:100%;
+	width:calc(100% + 40px);
+	font-size:14px;
+	color:#666;
+	margin:0 -20px -20px -20px;
+	@include clear();
+
+	// Bordered
+	&.bordered {
+		border-top:1px solid $lightblue;
+	}
+
+	// Heading
+	thead {
+		border-bottom:1px solid $lightblue;
+	}
+
+	// Headings
+	th {
+		text-align:left;
+		color:#222;
+		text-transform:uppercase;
+		font-size:10px;
+		padding:12px 20px;
+		font-weight:700;
+		border-left:1px solid $lightblue;
+		vertical-align:middle;
+		background:#FFF !important;
+		cursor:default !important;
+		&:first-child {border-left:none;}
+	}
+
+	// Rows
+	tr {
+		border-bottom:1px solid $lightblue;
+	}
+
+	// Cells
+	td {
+		font-size:14px;
+		line-height:1.5em;
+		color:#555;
+		padding:11px 20px 12px 20px;
+		vertical-align:middle;
+		@include select(text);
+	}
+
+	// Sort Icons
+	.fa-sort-up {
+		position:relative;
+		top:3px;
+		margin:0 8px 0 0;
+		color:$darkblue;
+	}
+
+	.fa-sort-down {
+		position:relative;
+		top:-3px;
+		margin:0 8px 0 0;
+		color:rgba(0, 0, 0, .2);
+	}
+}
+
+// Table in Table
+table table {
+	background:$lighterblue;
+	position:relative;
+	top:-32px;
+	margin-bottom:-45px;
+	tr {padding:0;}
+	th {background:$lighterblue !important;}
+}
+
+// Text Top
+.text-top {vertical-align:top !important;}
+
+// Text Left
+.text-left {text-align:left !important;}
+
+// Text Right
+.text-right {text-align:right !important;}
+
+// Clickable
+table.clickable tr:hover {
+	background:$lighterblue;
+	color:#000;
+	cursor:pointer;
+	@include select(none);
+}
+table.clickable {
+	.no-click {
+		cursor:default !important;
+		background:transparent !important;
+
+		tr {cursor:default !important}
+	}
+}

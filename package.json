@@ -1,6 +1,6 @@
 {
   "name": "scitran-organizer",
-  "productName": "SciTran Organizer",
+  "productName": "Organizer",
   "version": "0.0.1",
   "description": "SciTran Data Organizer",
   "main": "main.js",
@@ -9,16 +9,13 @@
     "start-hot": "cross-env HOT=1 electron main.js",
     "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
     "lint": "eslint app *.js",
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./build ./css ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
-    "pack": "npm run clean && npm run pack:osx && npm run pack:win",
-    "pack:osx": "npm run clean:osx && electron-packager . --out=dist/osx --platform=darwin --arch=x64 --version=0.37.8 --icon=assets/osx/logo.icns --ignore=dist --ignore=assets --ignore=builder.json --ignore=bower.json --ignore=README.md --ignore=.gitignore --ignore=preview.png",
-    "pack:win": "npm run clean:win && electron-packager . --out=dist/win --platform=win32 --arch=ia32 --version=0.37.8 --icon=assets/win/logo.ico --ignore=dist --ignore=assets --ignore=builder.json --ignore=bower.json --ignore=README.md --ignore=.gitignore --ignore=preview.png",
-    "build": "npm run build:osx && npm run build:win",
-    "build:osx": "npm run pack:osx && electron-builder \"dist/osx/*-darwin-x64/*.app\" --platform=osx --out=\"dist/osx\" --config=builder.json",
-    "build:win": "npm run pack:win && electron-builder \"dist/win/*-win32-ia32\" --platform=win --out=\"dist/win\" --config=builder.json",
-    "webpack": "webpack",
+    "pack": "npm run pack:osx && npm run pack:win",
+    "pack:osx": "npm run clean && npm run webpack && electron-packager . --out=dist/osx --platform=darwin --arch=x64 --icon=assets/osx/logo.icns --prune --ignore=assets --ignore=dist --ignore=scss",
+    "pack:win": "npm run clean && npm run webpack && electron-packager . --out=dist/win --platform=win32 --arch=ia32 --icon=assets/win/logo.ico --prune--ignore=assets --ignore=dist --ignore=scss",
+    "webpack": "webpack && gulp sass",
     "watch": "webpack-dev-server --hot --inline",
     "node": "node"
   },
@@ -42,23 +39,24 @@
   },
   "homepage": "https://github.com/scitran/organizer#readme",
   "devDependencies": {
-    "angular": "^1.5.7",
-    "angular-ui-router": "^0.3.1",
-    "concurrently": "^2.0.0",
-    "cross-env": "^1.0.7",
-    "dicom-parser": "^1.4.1",
-    "electron-packager": "^7.0.1",
-    "electron-prebuilt": "^1.0.1",
-    "eslint": "^2.10.2",
-    "eslint-loader": "^1.3.0",
-    "eslint-plugin-react": "^5.1.1",
+    "concurrently": "^2.2.0",
+    "cross-env": "^1.0.8",
+    "electron-packager": "^7.0.7",
+    "electron-prebuilt": "^1.3.4",
+    "eslint": "^2.13.1",
+    "eslint-loader": "^1.5.0",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
     "json-loader": "^0.5.4",
-    "rx": "^4.1.0",
-    "webpack": "^1.13.0",
-    "webpack-dev-server": "^1.14.1"
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.15.0"
   },
   "dependencies": {
+    "angular": "^1.5.8",
+    "angular-ui-router": "^0.3.1",
     "archiver": "^1.0.1",
-    "request": "^2.65.0"
+    "dicom-parser": "^1.7.4",
+    "request": "^2.74.0",
+    "rx": "^4.1.0"
   }
 }

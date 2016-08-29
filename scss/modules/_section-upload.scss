@@ -1,0 +1,27 @@
+// Upload
+section.upload {
+	display:block;
+	width:100%;
+	height:100%;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+
+	// Center
+	.center {
+		display:block;
+		text-align:center;
+	}
+
+	// Dots
+	.dots {
+		width:100%;
+		margin-top:60px;
+		@include select(none);
+	}
+}
+
+div.full-view {
+	height: 100%;
+	width: 100%;
+}

@@ -1,0 +1,27 @@
+// Footer
+footer {
+	display:block;
+	width:100%;
+	height:60px;
+	position:fixed;
+	bottom:0;
+	left:0;
+	right:0;
+	background:$lightblue;
+	border-top:1px solid darken($lightblue, 4%);
+	text-align:right;
+	font-size:0;
+	padding:10px 5px;
+
+	// Buttons
+	.button {
+		margin:0 5px;
+	}
+
+	// Progress Bars
+	.progress-bar {
+		float:left;
+		width:340px;
+		margin:11px 0 0 15px;
+	}
+}

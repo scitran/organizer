@@ -1,3 +1,4 @@
-dist
 build
+css
+dist
 node_modules

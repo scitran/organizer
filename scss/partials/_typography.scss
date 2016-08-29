@@ -1,0 +1,31 @@
+// Heading 1
+h1 {
+	font-size:26px;
+	font-weight:400;
+	margin:0 0 20px 0;
+	color:#7285aa;
+}
+
+// Heading 2
+h2 {
+	font-size:16px;
+	font-weight:700;
+	color:darken($darkblue, 15%);
+	margin:0 0 15px 0;
+}
+
+// Heading 3
+h3 {
+	font-size:20px;
+	font-weight:400;
+	color:#7285aa;
+	margin:0;
+}
+
+// Paragraph
+p {
+	font-size:14px;
+	color:rgba(0, 0, 0, .55);
+	line-height:1.7em;
+	margin:0 0 20px 0;
+}

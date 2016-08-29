@@ -3,6 +3,7 @@ const angular = require('angular');
 const app = angular.module('app', [require('angular-ui-router')]);
 const ipc  = require('electron').ipcRenderer;
 
+require('./filters/objLength.js');
 require('./services/bids.js');
 require('./services/dicom.js');
 require('./services/store.js');
@@ -11,6 +12,10 @@ require('./services/apiQueues.js');
 require('./main.controller.js');
 require('./main.series.controller.js');
 require('./main.bids.controller.js');
+require('./main.load.controller.js');
+require('./main.format.controller.js');
+require('./main.organize.controller.js');
+require('./main.upload.controller.js');
 require('./main.bidsToSeries.controller.js');
 document.addEventListener('DOMContentLoaded', boot);
 
@@ -23,18 +28,51 @@ function boot() {
 app.config(function($stateProvider, $urlRouterProvider) {
   //
   // For any unmatched url, redirect to /state1
-  $urlRouterProvider.otherwise('/main');
+  $urlRouterProvider.otherwise('/main/load');
 
   //
   // Now set up the states
   const main = {
     url: '/main',
+    templateUrl: 'partials/main.html',
     controller: 'mainCtrl',
-    controllerAs: 'main',
-    templateUrl: 'partials/main.html'
+    controllerAs: 'main'
   };
   $stateProvider
     .state('main', main)
+    .state('main.load', {
+      url: '/main/load',
+      parent: main,
+      templateUrl: 'partials/load.html',
+      controller: 'loadCtrl',
+      controllerAs: 'load'
+    })
+    .state('main.format', {
+      url: '/main/format',
+      parent: main,
+      templateUrl: 'partials/format.html',
+      controller: 'formatCtrl',
+      controllerAs: 'format'
+    })
+    .state('main.organize', {
+      url: '/main/organize',
+      parent: main,
+      templateUrl: 'partials/organize.html',
+      controller: 'organizeCtrl',
+      controllerAs: 'organize'
+    })
+    .state('main.save', {
+      url: '/main/save',
+      parent: main,
+      templateUrl: 'partials/save.html'
+    })
+    .state('main.upload', {
+      url: '/main/upload',
+      parent: main,
+      templateUrl: 'partials/upload.html',
+      controller: 'uploadCtrl',
+      controllerAs: 'upload'
+    })
     .state('main.series', {
       url: '/main/series',
       parent: main,
@@ -58,31 +96,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
 });
 app.run(run);
 
-run.$inject = ['$state', 'bids', 'dicom', 'organizerStore'];
+run.$inject = ['$rootScope', '$state', '$stateParams', 'bids', 'dicom', 'organizerStore'];
 
-function run($state, bids, dicom, organizerStore) {
+// jshint maxparams:6
+function run($rootScope, $state, $stateParams, bids, dicom, organizerStore) {
   $state.go('main');
-  organizerStore.update({instances: ['docker.local.flywheel.io']});
-  ipc.on('selected-directory', function (event, path) {
-    const subject = dicom.sortDicoms(path[0]);
-    subject.subscribe(
-      (dicomsOrMessage) => {
-        if (dicomsOrMessage.message !== undefined){
-          console.log(dicomsOrMessage.message);
-          organizerStore.update({message: dicomsOrMessage});
-        } else {
-          organizerStore.update({dicoms: dicomsOrMessage});
-        }
-      },
-      (err) => {
-        console.err(err);
-        organizerStore.update({error: err});
-      },
-      () => {
-        console.log('Processing completed.');
-      }
-    );
-  });
+  $rootScope.$state = $state;
+  $rootScope.$stateParams = $stateParams;
   ipc.on('selected-bids-directory', function(event, path){
     bids.bidsToSeries(path[0]).subscribe(
       function(sortedSeries) {

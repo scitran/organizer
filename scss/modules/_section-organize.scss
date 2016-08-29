@@ -1,0 +1,69 @@
+// Organize Data
+section.organize {
+	display:block;
+	width:100%;
+
+	// List
+	.list {
+		display:inline-block;
+		width:100%;
+		padding:0 300px 140px 0;
+		height:100%;
+		position:fixed;
+		top:60px;
+		left:0;
+		bottom:60px;
+		background:#FFF;
+		overflow-y:auto;
+
+		// Toggle
+		.toggle {
+			display:block;
+			width:100%;
+			border-bottom:1px solid $lightblue;
+			padding:18px 20px 20px 20px;
+
+			// Heading Icons
+			h3 .fa-sort-down, h3 .fa-sort-up, h3 .fa-pencil {
+				font-size:14px;
+				position:relative;
+				top:-4px;
+				margin:0 8px 0 0;
+				cursor:pointer;
+			}
+
+			h3 .fa-sort-up {
+				top:2px;
+			}
+
+			h3 .fa-pencil {
+				top:-2px;
+				margin:0 0 0 8px;
+				color:rgba(0, 0, 0, .3);
+				&:hover {color:$darkblue;}
+			}
+
+			// Table
+			table {
+				margin-top:20px;
+				border-top:1px solid $lightblue;
+			}
+		}
+	}
+
+	// Sidebar
+	.sidebar {
+		display:inline-block;
+		width:300px;
+		float:right;
+		height:100%;
+		position:fixed;
+		top:60px;
+		right:0;
+		bottom:60px;
+		background:$lighterblue;
+		overflow-y:auto;
+		border-left:1px solid $lightblue;
+		padding:20px 20px 140px 20px;
+	}
+}

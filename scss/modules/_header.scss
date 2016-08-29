@@ -1,0 +1,64 @@
+// Header
+header {
+	display:block;
+	position:fixed;
+	top:0;
+	left:0;
+	right:0;
+	width:100%;
+	height:60px;
+	background: #384256;
+	background: -moz-linear-gradient(-45deg,  #384256 0%, #526384 100%);
+	background: -webkit-linear-gradient(-45deg,  #384256 0%,#526384 100%);
+	background: linear-gradient(135deg,  #384256 0%,#526384 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#384256', endColorstr='#526384',GradientType=1 );
+	overflow:hidden;
+	@include select(none);
+
+	// Logo
+	.logo {
+		display:inline-block;
+		height:60px;
+		padding:15px 20px;
+	}
+
+	// Progress
+	.progress {
+		display:inline-block;
+		float:right;
+		font-size:0;
+
+		// Links
+		a {
+			display:inline-block;
+			font-size:14px;
+			color:#FFF;
+			color:rgba(255, 255, 255, .6);
+			text-decoration:none;
+			padding:22px 20px 24px;
+
+			// Hover
+			&:hover {
+				color:#FFF;
+				background:rgba(0, 0, 0, .08);
+			}
+
+			// Active
+			&.active {
+				color:#FFF;
+				background:rgba(255, 255, 255, .05);
+			}
+
+			// Icon
+			.fa {
+				font-size:12px;
+				margin:0 8px 0 0;
+			}
+
+			// Check Icon
+			.fa-check {
+				color:#FFF;
+			}
+		}
+	}
+}
