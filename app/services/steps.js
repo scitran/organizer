@@ -37,10 +37,10 @@ function steps($state) {
     $state.go(nextState);
   }
   function hasNext(){
-    return !!_steps[current()].next;
+    return !!(_steps[current()]||{}).next;
   }
   function hasPrev(){
-    return !!_steps[current()].prevState;
+    return !!(_steps[current()]||{}).prevState;
   }
   function back() {
     const currentState = current();
