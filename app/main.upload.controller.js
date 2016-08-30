@@ -10,6 +10,20 @@ uploadCtrl.$inject = ['$rootScope', '$timeout', 'organizerStore', 'organizerUplo
 function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   /*jshint validthis: true */
   const vm = this;
+  vm.url = 'docker.local.flywheel.io:8443';
+  vm.loadGroups = function loadGroups() {
+    if (vm.url && vm.apiKey){
+      organizerUpload.loadGroups(vm.url, vm.apiKey, true).then(function(groups){
+        console.log(groups);
+        vm.groups = JSON.parse(groups);
+        $rootScope.$apply();
+      },
+      function(err) {
+        throw err;
+      }
+    );
+    }
+  };
 
   vm.upload = function upload() {
     console.log(vm.url);
@@ -58,13 +72,13 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
               content: zip,
               name: filename
             };
-            organizerUpload.upload(vm.url, files, metadata).then(()=>{
+            organizerUpload.upload(vm.url, files, metadata, vm.apiKey, true).then(()=>{
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
               if (progress.state >= 100.0){
                 progress.size = 0;
                 $timeout(function(){
-                  progress.state = 0; 
+                  progress.state = 0;
                   $rootScope.$apply();
                 }, 1000);
               }

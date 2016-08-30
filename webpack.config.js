@@ -19,7 +19,8 @@ module.exports = {
       }
     ],
     loaders: [
-      { test: /\.json$/, loader: 'json-loader' }
+      { test: /\.json$/, loader: 'json-loader' },
+      { test: /\.css$/, loader: "style-loader!css-loader" }
     ],
     // workaround to solve https://github.com/webpack/webpack/issues/138
     noParse: /node_modules\/json-schema\/lib\/validate\.js/

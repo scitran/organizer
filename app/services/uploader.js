@@ -14,12 +14,26 @@ function organizerUpload(apiQueues) {
   const service = {
     upload: upload,
     createZipBuffer: createZipBuffer,
-    testcall: testcall
+    testcall: testcall,
+    loadGroups: loadGroups
   };
   return service;
   function testcall(instance) {
     var options = {
       url: `https://${instance}:8443/api`,
+      agentOptions: {
+        rejectUnauthorized: false
+      }
+    };
+    return apiQueues.append({options: options});
+  }
+  function loadGroups(instance, apiKey, root){
+    const options = {
+      method: 'GET',
+      url: `https://${instance}/api/groups?root=${root||false}`,
+      headers: {
+        'Authorization':  'scitran-user ' + apiKey
+      },
       agentOptions: {
         rejectUnauthorized: false
       }
@@ -56,7 +70,7 @@ function organizerUpload(apiQueues) {
     });
     return promise;
   }
-  function upload(instance, files, metadata) {
+  function upload(instance, files, metadata, apiKey, root) {
     var formData = {
       metadata: metadata
     };
@@ -71,12 +85,10 @@ function organizerUpload(apiQueues) {
     let message = {
       options: {
         method: 'POST',
-        url: `https://${instance}/api/upload/label`,
+        url: `https://${instance}/api/upload/label?root=${root||false}`,
         formData: formData,
         headers: {
-          'X-SciTran-Auth':  'change-me',
-          'X-Scitran-Name':  'SciTran-Drone-Reaper',
-          'X-Scitran-Method':'label-upload'
+          'Authorization':  'scitran-user ' + apiKey
         },
         agentOptions: {
           rejectUnauthorized: false
