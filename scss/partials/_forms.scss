@@ -14,7 +14,7 @@
 	}
 
 	// Input
-	input[type="text"] {
+	input[type="text"], input[type="password"] {
 		display:block;
 		width:100%;
 		max-width:400px;
@@ -31,5 +31,11 @@
 	select {
 		display:block;
 		width:100%;
+		max-width:400px;
+		-webkit-appearance: menulist-button;
+		height:39px;
+		option {
+			font-size:14px;
+		}
 	}
 }
