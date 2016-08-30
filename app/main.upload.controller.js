@@ -64,7 +64,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
               if (progress.state >= 100.0){
                 progress.size = 0;
                 $timeout(function(){
-                  progress.state = 0;
+                  progress.state = 0; 
                   $rootScope.$apply();
                 }, 1000);
               }

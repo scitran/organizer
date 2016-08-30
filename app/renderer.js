@@ -1,22 +1,19 @@
 'use strict';
 const angular = require('angular');
 const app = angular.module('app', [require('angular-ui-router')]);
-const ipc  = require('electron').ipcRenderer;
+//const ipc  = require('electron').ipcRenderer;
 
 require('./filters/objLength.js');
-require('./services/bids.js');
 require('./services/dicom.js');
+require('./services/steps.js');
 require('./services/store.js');
 require('./services/uploader.js');
 require('./services/apiQueues.js');
 require('./main.controller.js');
-require('./main.series.controller.js');
-require('./main.bids.controller.js');
 require('./main.load.controller.js');
 require('./main.format.controller.js');
 require('./main.organize.controller.js');
 require('./main.upload.controller.js');
-require('./main.bidsToSeries.controller.js');
 document.addEventListener('DOMContentLoaded', boot);
 
 function boot() {
@@ -79,43 +76,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: 'seriesCtrl',
       controllerAs: 'series',
       templateUrl: 'partials/series-table.html'
-    })
-    .state('main.bids', {
-      url: '/main/bids',
-      parent: main,
-      controller: 'bidsCtrl',
-      controllerAs: 'bids',
-      templateUrl: 'partials/bids-table.html'
-    })
-    .state('main.bids-to-series', {
-      url: '/main/sortedSeries',
-      controller: 'sortedSeriesCtrl',
-      controllerAs: 'sortedSeries',
-      templateUrl: 'partials/sorted-series-table.html'
     });
 });
 app.run(run);
 
-run.$inject = ['$rootScope', '$state', '$stateParams', 'bids', 'dicom', 'organizerStore'];
+run.$inject = ['$state'];
 
 // jshint maxparams:6
-function run($rootScope, $state, $stateParams, bids, dicom, organizerStore) {
+function run($state) {
   $state.go('main');
-  $rootScope.$state = $state;
-  $rootScope.$stateParams = $stateParams;
-  ipc.on('selected-bids-directory', function(event, path){
-    bids.bidsToSeries(path[0]).subscribe(
-      function(sortedSeries) {
-        console.log(sortedSeries);
-        organizerStore.update({sortedSeries: sortedSeries});
-      },
-      function(err) {
-        console.log('Err: %s', err);
-        organizerStore.update({error: err});
-      },
-      function() {
-        console.log('Processing completed');
-      }
-    );
-  });
 }

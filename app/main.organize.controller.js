@@ -5,12 +5,13 @@ const app = angular.module('app');
 
 app.controller('organizeCtrl', organizeCtrl);
 
-organizeCtrl.$inject = ['organizerStore'];
+organizeCtrl.$inject = ['steps', 'organizerStore'];
 
-function organizeCtrl(organizerStore){
+function organizeCtrl(steps, organizerStore){
   /*jshint validthis: true */
   const vm = this;
   updateTable();
+  steps.complete();
 
   function updateTable() {
     const seriesDicoms = organizerStore.get().seriesDicoms||[];
