@@ -11,6 +11,7 @@ function organizeCtrl(steps, organizerStore){
   /*jshint validthis: true */
   const vm = this;
   updateTable();
+  vm.handleKeyOnInput = handleKeyOnInput;
   steps.complete();
 
   function updateTable() {
@@ -48,5 +49,15 @@ function organizeCtrl(steps, organizerStore){
     organizerStore.update({projects: vm.projects});
     console.log(sessions);
     vm.loaded = true;
+  }
+  function handleKeyOnInput(container, field, event) {
+    if (!container['_' + field]) {
+      return;
+    } else if (event.which === 13) {
+      container[field] = container['_' + field];
+      container.editing = !container.editing;
+    } else if (event.which === 27) {
+      container.editing = !container.editing;
+    }
   }
 }

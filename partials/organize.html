@@ -1,7 +1,10 @@
 <section class="organize">
   <div class="list">
     <div class="toggle" ng-repeat="project in organize.projects">
-      <h3><span class="fa fa-sort-up"></span>{{project.label}}<span class="fa fa-pencil"></span></h3>
+      <h3>
+        <span ng-click="project.editing=!project.editing;project._label=project.label" ng-show="!project.editing"><span class="fa fa-sort-up"></span>{{project.label}}<span class="fa fa-pencil"></span></span>
+        <input type="text" ng-show="project.editing" ng-model="project._label" ng-keyup="organize.handleKeyOnInput(project, 'label', $event)">
+      </h3>
       <div class="content">
         <table class="clickable">
           <thead>
