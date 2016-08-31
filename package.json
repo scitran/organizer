@@ -49,6 +49,7 @@
     "gulp": "^3.9.1",
     "gulp-sass": "^2.3.2",
     "json-loader": "^0.5.4",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.15.0"

@@ -1,5 +1,16 @@
+/* global process */
 'use strict';
+
+// enables autoreload HTML if process is HOT
+if (process.env.HOT) {
+  require('../partials/main.html');
+  require('../partials/load.html');
+  require('../partials/upload.html');
+  require('../partials/organize.html');
+  require('../index.html');
+}
 require('../css/global.css');
+
 const angular = require('angular');
 const app = angular.module('app', [require('angular-ui-router')]);
 //const ipc  = require('electron').ipcRenderer;
