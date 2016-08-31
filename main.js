@@ -1,9 +1,11 @@
 /* global __dirname, process */
 'use strict';
 
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, Menu} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
+
+
 
 ipc.on('open-file-dialog', function (event, arg) {
   const window = BrowserWindow.fromWebContents(event.sender);
@@ -37,6 +39,26 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+  var template = [{
+      label: 'Application',
+      submenu: [
+          { label: 'About Application', selector: 'orderFrontStandardAboutPanel:' },
+          { type: 'separator' },
+          { label: 'Quit', accelerator: 'Command+Q', click: function() { app.quit(); }}
+      ]}, {
+      label: 'Edit',
+      submenu: [
+          { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+          { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+          { type: 'separator' },
+          { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+          { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+          { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+          { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
+      ]}
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 // This method will be called when Electron has finished

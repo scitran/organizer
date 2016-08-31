@@ -15,7 +15,7 @@
     "pack": "npm run pack:osx && npm run pack:win",
     "pack:osx": "npm run clean && npm run webpack && electron-packager . --out=dist/osx --platform=darwin --arch=x64 --icon=assets/osx/logo.icns --prune --ignore=assets --ignore=dist --ignore=scss",
     "pack:win": "npm run clean && npm run webpack && electron-packager . --out=dist/win --platform=win32 --arch=ia32 --icon=assets/win/logo.ico --prune--ignore=assets --ignore=dist --ignore=scss",
-    "webpack": "webpack && gulp sass",
+    "webpack": "gulp sass && webpack",
     "watch": "webpack-dev-server --hot --inline",
     "node": "node"
   },
@@ -57,6 +57,7 @@
   "dependencies": {
     "angular": "^1.5.8",
     "angular-ui-router": "^0.3.1",
+    "css-loader": "^0.24.0",
     "archiver": "^1.0.1",
     "dicom-parser": "^1.7.4",
     "request": "^2.74.0",
