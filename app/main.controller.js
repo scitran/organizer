@@ -18,6 +18,9 @@ function mainCtrl($rootScope, steps, organizerStore){
       isActive: true
     },
     'main.organize': {
+      next: () => 'main.save'
+    },
+    'main.save': {
       next: () => 'main.upload'
     },
     'main.upload': {}

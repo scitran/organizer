@@ -5,6 +5,7 @@
 if (process.env.HOT) {
   require('../partials/main.html');
   require('../partials/load.html');
+  require('../partials/save.html');
   require('../partials/upload.html');
   require('../partials/organize.html');
   require('../index.html');
@@ -26,6 +27,7 @@ require('./main.load.controller.js');
 require('./main.format.controller.js');
 require('./main.organize.controller.js');
 require('./main.upload.controller.js');
+require('./main.save.controller.js');
 document.addEventListener('DOMContentLoaded', boot);
 
 function boot() {
@@ -73,7 +75,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
     .state('main.save', {
       url: '/main/save',
       parent: main,
-      templateUrl: 'partials/save.html'
+      templateUrl: 'partials/save.html',
+      controller: 'saveCtrl',
+      controllerAs: 'save'
     })
     .state('main.upload', {
       url: '/main/upload',
@@ -81,13 +85,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
       templateUrl: 'partials/upload.html',
       controller: 'uploadCtrl',
       controllerAs: 'upload'
-    })
-    .state('main.series', {
-      url: '/main/series',
-      parent: main,
-      controller: 'seriesCtrl',
-      controllerAs: 'series',
-      templateUrl: 'partials/series-table.html'
     });
 });
 app.run(run);
