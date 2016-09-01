@@ -20,14 +20,17 @@ require('./filters/objLength.js');
 require('./services/dicom.js');
 require('./services/steps.js');
 require('./services/store.js');
+require('./services/projects.js');
 require('./services/uploader.js');
 require('./services/apiQueues.js');
+require('./services/fileSystemQueues.js');
 require('./main.controller.js');
 require('./main.load.controller.js');
 require('./main.format.controller.js');
 require('./main.organize.controller.js');
 require('./main.upload.controller.js');
 require('./main.save.controller.js');
+
 document.addEventListener('DOMContentLoaded', boot);
 
 function boot() {
