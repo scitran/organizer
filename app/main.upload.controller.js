@@ -30,7 +30,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
     let projects = organizerStore.get().projects;
     projects.forEach((p) => {
       const metadataBase = {
-        'group': {_id: 'my_group'},
+        'group': {_id: vm.destinationGroup._id},
         'project': {label: p.label}
       };
       Object.keys(p.sessions).forEach((sessionUID) => {
@@ -68,10 +68,10 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
           ));
           const zipPromise = organizerUpload.createZipBuffer(acquisition.filepaths, metadata);
           zipPromise.then(function(zip) {
-            let files = {
+            let files = [{
               content: zip,
               name: filename
-            };
+            }];
             organizerUpload.upload(vm.url, files, metadata, vm.apiKey, true).then(()=>{
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
