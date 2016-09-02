@@ -1,8 +1,8 @@
 /*globals Buffer */
 'use strict';
 const angular = require('angular');
-const fs = require('fs');
 const archiver = require('archiver');
+const {readFilePromise} = require('../common/util.js');
 
 const app = angular.module('app');
 
@@ -99,16 +99,4 @@ function organizerUpload(apiQueues) {
       console.log(body);
     });
   }
-}
-
-function readFilePromise(f) {
-  return new Promise(function(resolve, reject){
-    fs.readFile(f, function(err, data){
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
 }

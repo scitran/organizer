@@ -56,7 +56,20 @@ const dirListObsNew = function(path) {
     .expand(_helperObs);
 };
 
+function readFilePromise(f) {
+  return new Promise(function(resolve, reject){
+    fs.readFile(f, function(err, data){
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
 module.exports = {
   dirListObs: dirListObs,
-  dirListObsNew: dirListObsNew
+  dirListObsNew: dirListObsNew,
+  readFilePromise: readFilePromise
 };
