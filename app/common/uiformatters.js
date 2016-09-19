@@ -118,17 +118,17 @@ const mapBidsFolderToSeries = (files) => {
       return pointers;
     }, pointers)
     .map(function(pointers){
-      let bidsSeries = pointers[""];
+      let bidsSeries = pointers[''];
       let series = {projects: []};
       for (let p of bidsSeries.projects) {
         let project = Object.assign({}, p, {
           sessions: []
         });
-        delete project['subjects'];
+        delete project.subjects;
         series.projects.push(project);
         for (let sbj of p.subjects) {
           let subject = Object.assign({}, sbj);
-          delete subject['sessions'];
+          delete subject.sessions;
           for (let ses of sbj.sessions) {
             let session = Object.assign({}, ses,
               {subject: subject}
