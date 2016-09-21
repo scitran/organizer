@@ -1,10 +1,34 @@
 'use strict';
+const dateRegex = /^([0-9]{4})([0-9]{2})([0-9]{2})$/;
+const timeRegex = /^([0-9]{2})([0-9]{2})([0-9]{2})/;
+
+const formatTimestamp = (date, time) => {
+  // inputs:
+  //   date (format yyyymmdd)
+  //   time (format hhmm*)
+  if (!date) {
+    return {ts:null, readable:null};
+  } else if (!time) {
+    time = '000000';
+  }
+  const dateArray = dateRegex.exec(date);
+  const timeArray = timeRegex.exec(time);
+  const [year, month, day] = dateArray.slice(1, 4);
+  const [hour, minutes, seconds] = timeArray.slice(1, 4);
+  const formattedDate = [year, month, day].join('-');
+  const formattedTime = [hour, minutes, seconds].join(':');
+  return {
+    ts: formattedDate + 'T' + formattedTime +'Z',
+    readable: formattedDate + ' ' + formattedTime
+  };
+};
+
 
 const getSessionTimestamp = (dicomHeader) => {
-  return dicomHeader.StudyDate + ' ' + dicomHeader.StudyTime;
+  return formatTimestamp(dicomHeader.StudyDate, dicomHeader.StudyTime);
 };
 const getAcquisitionTimestamp = (dicomHeader) => {
-  return dicomHeader.AcquisitionDate + ' ' + dicomHeader.AcquisitionTime;
+  return formatTimestamp(dicomHeader.AcquisitionDate, dicomHeader.AcquisitionTime);
 };
 
 const humanReadableSize = (size) => {
@@ -118,17 +142,17 @@ const mapBidsFolderToSeries = (files) => {
       return pointers;
     }, pointers)
     .map(function(pointers){
-      let bidsSeries = pointers[""];
+      let bidsSeries = pointers[''];
       let series = {projects: []};
       for (let p of bidsSeries.projects) {
         let project = Object.assign({}, p, {
           sessions: []
         });
-        delete project['subjects'];
+        delete project.subjects;
         series.projects.push(project);
         for (let sbj of p.subjects) {
           let subject = Object.assign({}, sbj);
-          delete subject['sessions'];
+          delete subject.sessions;
           for (let ses of sbj.sessions) {
             let session = Object.assign({}, ses,
               {subject: subject}

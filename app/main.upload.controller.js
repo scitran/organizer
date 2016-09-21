@@ -38,7 +38,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
         const metadataSes = {
           'session': {
             'label': sessionUID,
-            //'timestamp': session.timestamp,
+            'timestamp': session.sessionTimestamp.ts,
             'subject': {
               'code': session.patientID
             }
@@ -54,9 +54,10 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
           const metadataAcq = {
             acquisition: {
               'label': acquisitionUID,
-              //'timestamp': acquisition.acquisitionTimestamp,
+              'timestamp': acquisition.acquisitionTimestamp.ts,
               'files': [{
-                name: filename
+                name: filename,
+                type: 'dicom'
               }]
             }
           };
