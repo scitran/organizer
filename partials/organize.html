@@ -1,37 +1,49 @@
 <section class="organize">
   <div class="list">
     <div class="toggle" ng-repeat="project in organize.projects">
-      <h3>
-        <span ng-click="project.editing=!project.editing;project._label=project.label" ng-show="!project.editing"><span class="fa fa-sort-up"></span>{{project.label}}<span class="fa fa-pencil"></span></span>
-        <input type="text" ng-show="project.editing" ng-model="project._label" ng-keyup="organize.handleKeyOnInput(project, 'label', $event)">
+      <h3 class="project-title">
+        <span ng-click="project.editing=!project.editing;project._label=project.label" ng-show="!project.editing" class="project-title">
+          <span class="fa fa-sort-up"></span>{{project.label}}
+          <span class="fa fa-pencil"></span>
+        </span>
+        <span class="input-title" ng-show="project.editing">
+          <input type="text" ng-model="project._label" ng-keyup="organize.handleKeyOnInput(project, 'label', $event)" class="project-title">
+        </span>
       </h3>
       <div class="content">
         <table class="clickable">
           <thead>
             <th width="20"><input type="checkbox"></th>
             <th>Session Name</th>
-            <th width="200"># of Aquisitions</th>
+            <th width="200">Subject Code</th>
+            <th width="200"># of Acquisitions</th>
           </thead>
           <tbody ng-repeat="(sessionUID, session) in project.sessions">
             <tr>
               <td><input type="checkbox"></td>
-              <td ng-click="session.show=!session.show"><span class="fa fa-sort-down"></span>{{session.sessionTimestamp}}</td>
+              <td ng-click="session.show=!session.show">
+                <span class="fa" ng-class="{'fa-sort-down':!session.show, 'fa-sort-up':session.show}"></span>
+                {{session.sessionTimestamp.readable}}
+              </td>
+              <td>{{session.patientID}}</td>
               <td>{{session.acquisitions | objLength}}</td>
             </tr>
             <tr class="no-click" ng-if="session.show">
-              <td colspan="3">
+              <td colspan="4">
                 <table>
                   <thead>
                     <th width="20"><input type="checkbox"></th>
-                    <th>Acquisition Name</th>
-                    <th>Acquisition Count</th>
-                    <th width="200">Actions</th>
+                    <th>Acquisition Label</th>
+                    <th width=200>Timestamp</th>
+                    <th width="100">Size</th>
+                    <th width="100"># of Files</th>
                   </thead>
                   <tr ng-repeat="(acqUID, acquisition) in session.acquisitions">
                     <td width="20"><input type="checkbox"></td>
                     <td>{{acquisition.acquisitionLabel}}</td>
+                    <td>{{acquisition.acquisitionTimestamp.readable}}</td>
+                    <td>{{organize.humanReadableSize(acquisition.size)}}</td>
                     <td>{{acquisition.count}}</td>
-                    <td><span class="fa fa-download"></span></td>
                   </tr>
                 </table>
               </td>
@@ -40,50 +52,36 @@
         </table>
       </div>
     </div>
-    <!-- <div class="toggle">
-      <h3><span class="fa fa-sort-down"></span>Another Project Name<span class="fa fa-pencil"></span></h3>
-    </div>
-    <div class="toggle">
-      <h3><span class="fa fa-sort-down"></span>Third Project Goes Right Here<span class="fa fa-pencil"></span></h3>
-    </div>
-    <div class="toggle">
-      <h3><span class="fa fa-sort-down"></span>And a Fourth<span class="fa fa-pencil"></span></h3>
-    </div>
-    <div class="toggle">
-      <h3><span class="fa fa-sort-down"></span>Last But Not Least<span class="fa fa-pencil"></span></h3>
-    </div> -->
   </div>
-  <div class="sidebar">
+  <!--div class="sidebar">
     <h2>Filter &amp; Sort</h2>
     <div class="form-group">
       <label for="search">Search</label>
-      <input type="text" placeholder="ie: example project">
+      <input type="text" placeholder="session name, acquisition label, etc.">
     </div>
     <div class="form-group">
-      <label>Example</label>
+      <label>Subject Sex</label>
       <select>
         <option>Select option</option>
-        <option>Example1</option>
-        <option>Example2</option>
+        <option>male</option>
+        <option>female</option>
       </select>
     </div>
     <div class="form-group">
-      <label>Example</label>
-      <select>
-        <option>Select option</option>
-        <option>Example1</option>
-        <option>Example2</option>
-      </select>
+      <label>Subject Age</label>
+      <input type="number" placeholder="from">
+      <input type="number" placeholder="to">
     </div>
     <div class="form-group">
-      <label>Example</label>
+      <label>Measurement Type</label>
       <select>
         <option>Select option</option>
-        <option>Example1</option>
-        <option>Example2</option>
+        <option>Anatomy T1</option>
+        <option>Anatomy T2</option>
+        <option>Diffusion</option>
+        <option>Functional</option>
       </select>
     </div>
-    <a href="" class="button primary">Action Button</a>
     <a href="" class="button">Reset Filters</a>
-  </div>
+  </div-->
 </section>

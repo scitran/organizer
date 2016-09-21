@@ -2,6 +2,7 @@
 
 const angular = require('angular');
 const app = angular.module('app');
+const {humanReadableSize} = require('./common/uiformatters.js');
 
 app.controller('organizeCtrl', organizeCtrl);
 
@@ -12,7 +13,25 @@ function organizeCtrl(steps, organizerStore){
   const vm = this;
   updateTable();
   vm.handleKeyOnInput = handleKeyOnInput;
+  vm.humanReadableSize = humanReadableSize;
+  // vm.select = select;
+
   steps.complete();
+  // function select(container) {
+  //   if (container.selected ==
+  //   container.selected = container;
+  //   let childContainers;
+  //   if (container.sessions) {
+  //     childContainers = container.sessions;
+  //   } else if (container.acquisitions) {
+  //     childContainers = container.acquisitions;
+  //   } else {
+  //     return;
+  //   }
+  //   for (let k of Object.keys(childContainers)){
+  //     select(childContainers[k]);
+  //   }
+  // }
 
   function updateTable() {
     const seriesDicoms = organizerStore.get().seriesDicoms||[];
@@ -47,7 +66,6 @@ function organizeCtrl(steps, organizerStore){
       }
     ];
     organizerStore.update({projects: vm.projects});
-    console.log(sessions);
     vm.loaded = true;
   }
   function handleKeyOnInput(container, field, event) {
@@ -55,6 +73,7 @@ function organizeCtrl(steps, organizerStore){
       return;
     } else if (event.which === 13) {
       container[field] = container['_' + field];
+      organizerStore.update({projects: vm.projects});
       container.editing = !container.editing;
     } else if (event.which === 27) {
       container.editing = !container.editing;

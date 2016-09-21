@@ -116,7 +116,6 @@ function dicom($rootScope, organizerStore) {
           function () {
             subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
             subject.onNext(dicoms);
-            console.log(dicoms);
             subject.onCompleted();
           }
         );
