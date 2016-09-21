@@ -18,7 +18,7 @@
             <th width="200">Subject Code</th>
             <th width="200"># of Acquisitions</th>
           </thead>
-          <tbody ng-repeat="(sessionUID, session) in project.sessions">
+          <tbody ng-repeat="(sessionUID, session) in project.children">
             <tr>
               <td><input type="checkbox"></td>
               <td ng-click="session.show=!session.show">
@@ -26,7 +26,7 @@
                 {{session.sessionTimestamp.readable}}
               </td>
               <td>{{session.patientID}}</td>
-              <td>{{session.acquisitions | objLength}}</td>
+              <td>{{session.children | objLength}}</td>
             </tr>
             <tr class="no-click" ng-if="session.show">
               <td colspan="4">
@@ -38,7 +38,7 @@
                     <th width="100">Size</th>
                     <th width="100"># of Files</th>
                   </thead>
-                  <tr ng-repeat="(acqUID, acquisition) in session.acquisitions">
+                  <tr ng-repeat="(acqUID, acquisition) in session.children">
                     <td width="20"><input type="checkbox"></td>
                     <td>{{acquisition.acquisitionLabel}}</td>
                     <td>{{acquisition.acquisitionTimestamp.readable}}</td>

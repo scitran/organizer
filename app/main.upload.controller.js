@@ -33,8 +33,8 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
         'group': {_id: vm.destinationGroup._id},
         'project': {label: p.label}
       };
-      Object.keys(p.sessions).forEach((sessionUID) => {
-        const session = p.sessions[sessionUID];
+      Object.keys(p.children).forEach((sessionUID) => {
+        const session = p.children[sessionUID];
         const metadataSes = {
           'session': {
             'label': sessionUID,
@@ -44,12 +44,12 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
             }
           }
         };
-        const acqKeys = Object.keys(session.acquisitions);
+        const acqKeys = Object.keys(session.children);
         const progress = organizerStore.get().progress;
         const size = organizerStore.get().loaded.size;
         progress.size = 0;
         acqKeys.forEach((acquisitionUID) => {
-          const acquisition = session.acquisitions[acquisitionUID];
+          const acquisition = session.children[acquisitionUID];
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
             acquisition: {

@@ -38,17 +38,17 @@ function projectsService(fileSystemQueues) {
         operation: 'mkdir',
         path: projectPath
       });
-      Object.keys(p.sessions).forEach((sessionUID) => {
+      Object.keys(p.children).forEach((sessionUID) => {
         const sessionPath = projectPath + '/' + sessionUID;
-        const session = p.sessions[sessionUID];
+        const session = p.children[sessionUID];
         const sessionDir_ = fileSystemQueues.append({
           operation: 'mkdir',
           path: sessionPath,
           waitFor: projectDir_
         });
-        Object.keys(session.acquisitions).forEach((acquisitionUID) => {
+        Object.keys(session.children).forEach((acquisitionUID) => {
           const acqPath = sessionPath + '/' + acquisitionUID;
-          const acquisition = session.acquisitions[acquisitionUID];
+          const acquisition = session.children[acquisitionUID];
           const acqDir_ = fileSystemQueues.append({
             operation: 'mkdir',
             path: acqPath,
