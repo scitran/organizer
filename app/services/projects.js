@@ -33,6 +33,9 @@ function projectsService(fileSystemQueues) {
   }
   function save(projects, path){
     projects.forEach((p) => {
+      if (p.state !== 'checked' && p.state !== 'indeterminate'){
+        return;
+      }
       const projectPath = path + '/' + p.label;
       const projectDir_ = fileSystemQueues.append({
         operation: 'mkdir',
@@ -41,6 +44,9 @@ function projectsService(fileSystemQueues) {
       Object.keys(p.children).forEach((sessionUID) => {
         const sessionPath = projectPath + '/' + sessionUID;
         const session = p.children[sessionUID];
+        if (session.state !== 'checked' && session.state !== 'indeterminate'){
+          return;
+        }
         const sessionDir_ = fileSystemQueues.append({
           operation: 'mkdir',
           path: sessionPath,
@@ -49,6 +55,9 @@ function projectsService(fileSystemQueues) {
         Object.keys(session.children).forEach((acquisitionUID) => {
           const acqPath = sessionPath + '/' + acquisitionUID;
           const acquisition = session.children[acquisitionUID];
+          if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
+            return;
+          }
           const acqDir_ = fileSystemQueues.append({
             operation: 'mkdir',
             path: acqPath,

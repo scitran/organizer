@@ -64,6 +64,7 @@ function organizeCtrl(steps, organizerStore){
     if (container.parent){
       updateParent(container.parent, initialValue, container.state);
     }
+    organizerStore.update({projects: vm.projects});
   }
 
   function updateTable() {

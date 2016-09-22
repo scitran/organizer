@@ -29,12 +29,18 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
     console.log(vm.url);
     let projects = organizerStore.get().projects;
     projects.forEach((p) => {
+      if (p.state !== 'checked' && p.state !== 'indeterminate'){
+        return;
+      }
       const metadataBase = {
         'group': {_id: vm.destinationGroup._id},
         'project': {label: p.label}
       };
       Object.keys(p.children).forEach((sessionUID) => {
         const session = p.children[sessionUID];
+        if (session.state !== 'checked' && session.state !== 'indeterminate'){
+          return;
+        }
         const metadataSes = {
           'session': {
             'label': sessionUID,
@@ -50,6 +56,9 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
         progress.size = 0;
         acqKeys.forEach((acquisitionUID) => {
           const acquisition = session.children[acquisitionUID];
+          if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
+            return;
+          }
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
             acquisition: {
