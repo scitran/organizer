@@ -22,42 +22,51 @@ app.factory('fileSystemQueues', queues);
 //     }
 //   });
 // }
-function write(path, archive, resolve, reject) {
+function write(path, archive, resolve, reject, final) {
   const stream = archive.pipe(fs.createWriteStream(path));
   stream.on('finish', () =>{
     resolve();
+    final();
   });
   stream.on('error', (error) => {
     reject(error);
+    final();
   });
 }
 
 function exec(message, observable){
   const operation = message.options.operation;
   const path = message.options.path;
+  const final = function() {
+    observable.request(1);
+  };
   if (operation === 'mkdir') {
     fs.mkdir(path, (error, data) => {
       if (error) {
         console.log(error);
+        final();
         message.reject(error);
       } else {
         message.resolve(data);
-        observable.request(1);
+        final();
       }
     });
   } else if (operation === 'write') {
     if (message.options.content_) {
       message.options.content_.then((archive) => {
-        write(path, archive, message.resolve, message.reject);
+        write(path, archive, message.resolve, message.reject, final);
       });
     } else if (message.options.content) {
-      write(path, message.options.content, message.resolve, message.reject);
+      write(path, message.options.content, message.resolve, message.reject, final);
     } else {
+      final();
       message.reject('content is missing on write operation');
     }
   } else if (!operation) {
+    final();
     message.reject(`operation is missing`);
   } else {
+    final();
     message.reject(`operation ${operation} not implemented`);
   }
 }

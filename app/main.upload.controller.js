@@ -29,12 +29,18 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
     console.log(vm.url);
     let projects = organizerStore.get().projects;
     projects.forEach((p) => {
+      if (p.state !== 'checked' && p.state !== 'indeterminate'){
+        return;
+      }
       const metadataBase = {
         'group': {_id: vm.destinationGroup._id},
         'project': {label: p.label}
       };
-      Object.keys(p.sessions).forEach((sessionUID) => {
-        const session = p.sessions[sessionUID];
+      Object.keys(p.children).forEach((sessionUID) => {
+        const session = p.children[sessionUID];
+        if (session.state !== 'checked' && session.state !== 'indeterminate'){
+          return;
+        }
         const metadataSes = {
           'session': {
             'label': sessionUID,
@@ -44,16 +50,19 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
             }
           }
         };
-        const acqKeys = Object.keys(session.acquisitions);
+        const acqKeys = Object.keys(session.children);
         const progress = organizerStore.get().progress;
         const size = organizerStore.get().loaded.size;
         progress.size = 0;
         acqKeys.forEach((acquisitionUID) => {
-          const acquisition = session.acquisitions[acquisitionUID];
+          const acquisition = session.children[acquisitionUID];
+          if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
+            return;
+          }
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
             acquisition: {
-              'label': acquisitionUID,
+              'label': acquisition.acquisitionLabel,
               'timestamp': acquisition.acquisitionTimestamp.ts,
               'files': [{
                 name: filename,

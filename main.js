@@ -29,11 +29,6 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  // Open the DevTools.
-  if (process.env.HOT) {
-    mainWindow.webContents.openDevTools();
-  }
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -45,6 +40,9 @@ function createWindow () {
     label: 'Application',
     submenu: [
       { label: 'About Application', selector: 'orderFrontStandardAboutPanel:' },
+      { type: 'separator' },
+      { label: 'Refresh', accelerator: 'Command+R', click: function() {mainWindow.loadURL('file://' + __dirname + '/index.html');}},
+      { label: 'Developer Tools', accelerator: 'Alt+Command+J', click: function() {mainWindow.webContents.openDevTools();}},
       { type: 'separator' },
       { label: 'Quit', accelerator: 'Command+Q', click: function() { app.quit(); }}
     ]},
