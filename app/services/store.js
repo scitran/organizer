@@ -26,10 +26,10 @@ function organizerStore() {
   };
   changed.subscribe(
     (action) => {
-      //jshint unused:false
       if (typeof action.update.dicoms !== 'undefined'){
         update({
-          seriesDicoms: mapToSeriesRow(action.update.dicoms)
+          seriesDicoms: mapToSeriesRow(action.update.dicoms),
+          rawDicoms: true
         });
       }
     }

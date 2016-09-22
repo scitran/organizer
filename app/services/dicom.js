@@ -56,12 +56,10 @@ function dicom($rootScope, organizerStore) {
   const parseDicoms = (files, count) => {
     const increment = 100.0/count;
     const progress = organizerStore.get().progress;
-    const loaded = organizerStore.get().loaded;
     return files.map(
       (f) => {
         try {
           const parsed = parse(f);
-          loaded.size += parsed.size;
           return {
             path: f,
             size: parsed.size,

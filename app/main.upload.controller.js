@@ -62,7 +62,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
             acquisition: {
-              'label': acquisitionUID,
+              'label': acquisition.acquisitionLabel,
               'timestamp': acquisition.acquisitionTimestamp.ts,
               'files': [{
                 name: filename,

@@ -11,6 +11,8 @@ organizeCtrl.$inject = ['steps', 'organizerStore'];
 function organizeCtrl(steps, organizerStore){
   /*jshint validthis: true */
   const vm = this;
+  const loaded = organizerStore.get().loaded;
+  loaded.size = 0;
   updateTable();
   vm.handleKeyOnInput = handleKeyOnInput;
   vm.humanReadableSize = humanReadableSize;
@@ -25,6 +27,11 @@ function organizeCtrl(steps, organizerStore){
       container.state = false;
     } else {
       container.state = 'checked';
+    }
+    if (container.size) {
+      console.log(container);
+      const increment = (!container.state)?-container.size:container.size;
+      loaded.size += increment;
     }
     const childContainers = container.children || {};
     container.selectedCount = 0;
@@ -68,6 +75,10 @@ function organizeCtrl(steps, organizerStore){
   }
 
   function updateTable() {
+    if (!organizerStore.get().rawDicoms){
+      vm.projects = organizerStore.get().projects;
+      return;
+    }
     const seriesDicoms = organizerStore.get().seriesDicoms||[];
     let sessions = {};
     let project = {
@@ -99,8 +110,9 @@ function organizeCtrl(steps, organizerStore){
       acquisition.size += dicom.size;
       acquisition.filepaths.push(dicom.path);
     });
+    select(project);
     vm.projects = [project];
-    organizerStore.update({projects: vm.projects});
+    organizerStore.update({projects: vm.projects, rawDicoms: false});
     vm.loaded = true;
   }
   function handleKeyOnInput(container, field, event) {
