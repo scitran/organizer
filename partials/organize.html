@@ -13,14 +13,14 @@
       <div class="content">
         <table class="clickable">
           <thead>
-            <th width="20"><input type="checkbox"></th>
+            <th width="20"><input type="checkbox" ng-click="organize.select(project)" ng-checked="project.state==='checked'" ng-class="{indeterminate: project.state==='indeterminate'}"></th>
             <th>Session Name</th>
             <th width="200">Subject Code</th>
             <th width="200"># of Acquisitions</th>
           </thead>
           <tbody ng-repeat="(sessionUID, session) in project.children">
             <tr>
-              <td><input type="checkbox"></td>
+              <td><input type="checkbox" ng-click="organize.select(session)" ng-checked="session.state==='checked'" ng-class="{indeterminate: session.state==='indeterminate'}"></td>
               <td ng-click="session.show=!session.show">
                 <span class="fa" ng-class="{'fa-sort-down':!session.show, 'fa-sort-up':session.show}"></span>
                 {{session.sessionTimestamp.readable}}
@@ -32,14 +32,14 @@
               <td colspan="4">
                 <table>
                   <thead>
-                    <th width="20"><input type="checkbox"></th>
+                    <th width="20"></th>
                     <th>Acquisition Label</th>
                     <th width=200>Timestamp</th>
                     <th width="100">Size</th>
                     <th width="100"># of Files</th>
                   </thead>
                   <tr ng-repeat="(acqUID, acquisition) in session.children">
-                    <td width="20"><input type="checkbox"></td>
+                    <td width="20"><input type="checkbox" ng-click="organize.select(acquisition)" ng-checked="acquisition.state==='checked'" ng-class="{indeterminate: acquisition.state==='indeterminate'}"></td>
                     <td>{{acquisition.acquisitionLabel}}</td>
                     <td>{{acquisition.acquisitionTimestamp.readable}}</td>
                     <td>{{organize.humanReadableSize(acquisition.size)}}</td>

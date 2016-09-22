@@ -14,23 +14,57 @@ function organizeCtrl(steps, organizerStore){
   updateTable();
   vm.handleKeyOnInput = handleKeyOnInput;
   vm.humanReadableSize = humanReadableSize;
-  // vm.select = select;
+  vm.select = select;
 
   steps.complete();
-  // function select(container) {
-  //   container.selected = !container.selected;
-  //   let childContainers;
-  //   if (container.sessions) {
-  //     childContainers = container.sessions;
-  //   } else if (container.acquisitions) {
-  //     childContainers = container.acquisitions;
-  //   } else {
-  //     return;
-  //   }
-  //   for (let k of Object.keys(childContainers)){
-  //     select(childContainers[k]);
-  //   }
-  // }
+  function select(container, value) {
+    const initialValue = container.state;
+    if (typeof value !== 'undefined') {
+      container.state = value;
+    } else if (container.state === 'checked'){
+      container.state = false;
+    } else {
+      container.state = 'checked';
+    }
+    const childContainers = container.children || {};
+    container.selectedCount = 0;
+    container.indeterminateCount = 0;
+    for (let k of Object.keys(childContainers)){
+      select(childContainers[k], container.state);
+    }
+    if (container.state) {
+      container.selectedCount = Object.keys(childContainers).length;
+    }
+    if (typeof value === 'undefined' && container.parent) {
+      updateParent(container.parent, initialValue, container.state);
+    }
+  }
+  function updateParent(container, oldValue, newValue) {
+    const initialValue = container.state;
+    container.selectedCount = container.selectedCount || 0;
+    container.indeterminateCount = container.indeterminateCount || 0;
+    if (oldValue === 'indeterminate') {
+      container.indeterminateCount -= 1;
+    } else if (oldValue === 'checked') {
+      container.selectedCount -= 1;
+    }
+    if (newValue === 'checked') {
+      container.selectedCount += 1;
+    } else if (newValue === 'indeterminate') {
+      container.indeterminateCount += 1;
+    }
+    const numChildren = Object.keys(container.children).length;
+    if (container.selectedCount === numChildren) {
+      container.state = 'checked';
+    } else if (container.indeterminateCount + container.selectedCount > 0) {
+      container.state = 'indeterminate';
+    } else {
+      container.state = false;
+    }
+    if (container.parent){
+      updateParent(container.parent, initialValue, container.state);
+    }
+  }
 
   function updateTable() {
     const seriesDicoms = organizerStore.get().seriesDicoms||[];

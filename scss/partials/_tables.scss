@@ -97,3 +97,33 @@ table.clickable {
 		tr {cursor:default !important}
 	}
 }
+
+input[type="checkbox"].indeterminate {
+	&::before {
+		font-size:8px;
+		font-family: FontAwesome;
+		display: inline-block;
+		color: white;
+		visibility: visible;
+		content: "\f068";
+		text-align: center;
+		overflow: hidden;
+		width:12px;
+		height:12px;
+		background-color: #1a8cff;
+		-webkit-border-radius: 4px;
+	}
+}
+
+table thead input[type="checkbox"] {
+	&::before {
+			font-size:8px;
+			line-height: 12px;
+			visibility: visible;
+			display: inline-block;
+			content: "\0000a0";
+			width:12px;
+			height:12px;
+			overflow: hidden;
+	}
+}
