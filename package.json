@@ -5,8 +5,8 @@
   "description": "SciTran Data Organizer",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js",
-    "start-hot": "cross-env HOT=1 electron main.js",
+    "start": "electron --js-flags=\"--max_old_space_size=4096\" main.js",
+    "start-hot": "cross-env HOT=1 electron --js-flags=\"--max_old_space_size=4096\" main.js",
     "dev": "concurrently --kill-others \"gulp sass:watch\" \"npm run watch\" \"npm run start-hot\"",
     "lint": "eslint app *.js",
     "clean": "rm -rf ./build ./css ./dist",

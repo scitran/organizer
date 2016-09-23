@@ -62,6 +62,17 @@ function exec(message, observable){
       final();
       message.reject('content is missing on write operation');
     }
+  } else if (operation === 'read') {
+    fs.readFile(path, function(err, data) {
+      if (err){
+        console.log(err);
+        final();
+        message.reject(err);
+      } else {
+        message.resolve(data);
+        final();
+      }
+    });
   } else if (!operation) {
     final();
     message.reject(`operation is missing`);

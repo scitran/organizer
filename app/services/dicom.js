@@ -9,15 +9,19 @@ const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
 
-function dicom($rootScope, organizerStore) {
+function dicom($rootScope, organizerStore, fileSystemQueues) {
   console.log(organizerStore);
   const parse = (filePath) => {
-    const dicomFileAsBuffer = fs.readFileSync(filePath);
-    const size = dicomFileAsBuffer.length * dicomFileAsBuffer.BYTES_PER_ELEMENT;
-    return {
-      dp: dicomParser.parseDicom(dicomFileAsBuffer),
-      size: size
-    };
+    return fileSystemQueues.append({
+      operation: 'read',
+      path: filePath
+    }).then(
+      function(dicomFileAsBuffer) {
+        const size = dicomFileAsBuffer.length * dicomFileAsBuffer.BYTES_PER_ELEMENT;
+        const dp = dicomParser.parseDicom(dicomFileAsBuffer);
+        return {dp: dp, size: size};
+      }
+    );
   };
 
   const getTag = (key) => {
@@ -54,21 +58,24 @@ function dicom($rootScope, organizerStore) {
   };
 
   const parseDicoms = (files, count) => {
+    console.log(files);
+    console.log(count);
     const increment = 100.0/count;
     const progress = organizerStore.get().progress;
-    return files.map(
+    return files.flatMap(
       (f) => {
-        try {
-          const parsed = parse(f);
-          return {
-            path: f,
-            size: parsed.size,
-            header: convertHeaderToObject(parsed.dp)
-          };
-        } catch (exc) {
-          return {name: f};
-        }
-
+        return parse(f).then(
+          function(parsed) {
+            return {
+              path: f,
+              size: parsed.size,
+              header: convertHeaderToObject(parsed.dp)
+            };
+          },
+          function() {
+            return {path: f};
+          }
+        );
       }
     ).filter(
       (o) => {
@@ -113,6 +120,8 @@ function dicom($rootScope, organizerStore) {
           },
           function () {
             subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
+            console.log(dicoms.length);
+            console.log(dicoms);
             subject.onNext(dicoms);
             subject.onCompleted();
           }
@@ -130,5 +139,5 @@ function dicom($rootScope, organizerStore) {
   };
 }
 
-dicom.$inject = ['$rootScope', 'organizerStore'];
+dicom.$inject = ['$rootScope', 'organizerStore', 'fileSystemQueues'];
 app.factory('dicom', dicom);
