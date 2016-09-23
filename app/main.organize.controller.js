@@ -29,7 +29,6 @@ function organizeCtrl(steps, organizerStore){
       container.state = 'checked';
     }
     if (container.size) {
-      console.log(container);
       const increment = (!container.state)?-container.size:container.size;
       loaded.size += increment;
     }

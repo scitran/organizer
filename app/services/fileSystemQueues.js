@@ -80,7 +80,9 @@ function queues() {
       if (message.options.waitFor) {
         message.options.waitFor.then(() => {
           exec(message, o);
-        });
+        },
+        (error) => {message.reject(error);o.request(1);}
+      );
       } else {
         exec(message, o);
       }

@@ -16,6 +16,9 @@ function organizerStore() {
     },
     loaded: {
       size: 0
+    },
+    success: {
+      state: ''
     }
   };
   const changed = new Rx.Subject();
@@ -26,7 +29,7 @@ function organizerStore() {
   };
   changed.subscribe(
     (action) => {
-      if (typeof action.update.dicoms !== 'undefined'){
+      if (typeof action.update.dicoms !== 'undefined') {
         update({
           seriesDicoms: mapToSeriesRow(action.update.dicoms),
           rawDicoms: true

@@ -26,4 +26,5 @@ function mainCtrl($rootScope, steps, organizerStore){
     'main.upload': {}
   });
   vm.progress = organizerStore.get().progress;
+  vm.success = organizerStore.get().success;
 }
