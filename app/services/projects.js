@@ -32,6 +32,7 @@ function projectsService(fileSystemQueues) {
     return promise;
   }
   function save(projects, path){
+    const allPromises = [];
     projects.forEach((p) => {
       if (p.state !== 'checked' && p.state !== 'indeterminate'){
         return;
@@ -41,6 +42,7 @@ function projectsService(fileSystemQueues) {
         operation: 'mkdir',
         path: projectPath
       });
+      allPromises.push(projectDir_);
       Object.keys(p.children).forEach((sessionUID) => {
         const sessionPath = projectPath + '/' + sessionUID;
         const session = p.children[sessionUID];
@@ -52,6 +54,7 @@ function projectsService(fileSystemQueues) {
           path: sessionPath,
           waitFor: projectDir_
         });
+        allPromises.push(sessionDir_);
         Object.keys(session.children).forEach((acquisitionUID) => {
           const acqPath = sessionPath + '/' + acquisitionUID;
           const acquisition = session.children[acquisitionUID];
@@ -65,15 +68,16 @@ function projectsService(fileSystemQueues) {
           });
           const archivePromise = createZip(acquisition.filepaths);
           const zipPath = acqPath + '/' + acquisitionUID + '.zip';
-          fileSystemQueues.append({
+          allPromises.push(fileSystemQueues.append({
             operation: 'write',
             path: zipPath,
             content_: archivePromise,
             waitFor: acqDir_
-          });
+          }));
         });
       });
     });
+    return Promise.all(allPromises);
   }
 }
 projectsService.$inject = ['fileSystemQueues'];

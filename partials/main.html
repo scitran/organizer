@@ -22,6 +22,10 @@
 <div ui-view class="full-view"></div>
 
 	<footer>
+    <div ng-show="main.success.state" class="warning">
+      <div ng-if="main.success.state==='success'" class="success">Success!</div>
+      <div ng-if="main.success.state==='failure'" class="failure">Failure{{main.success.reason}}</div>
+    </div>
 		<!-- Progress Bar -->
 		<div class="progress-bar" ng-show="main.progress.state">
 			<div class="progress" ng-style="{width: main.progress.state + '%'}"></div>
