@@ -15,7 +15,8 @@ function organizerUpload(apiQueues) {
     upload: upload,
     createZipBuffer: createZipBuffer,
     testcall: testcall,
-    loadGroups: loadGroups
+    loadGroups: loadGroups,
+    loadProjects: loadProjects
   };
   return service;
   function testcall(instance) {
@@ -31,6 +32,19 @@ function organizerUpload(apiQueues) {
     const options = {
       method: 'GET',
       url: `https://${instance}/api/groups?root=${root||false}`,
+      headers: {
+        'Authorization':  'scitran-user ' + apiKey
+      },
+      agentOptions: {
+        rejectUnauthorized: false
+      }
+    };
+    return apiQueues.append({options: options});
+  }
+  function loadProjects(instance, apiKey, group, root){
+    const options = {
+      method: 'GET',
+      url: `https://${instance}/api/groups/${group}/projects?root=${root||false}`,
       headers: {
         'Authorization':  'scitran-user ' + apiKey
       },

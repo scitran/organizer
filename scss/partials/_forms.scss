@@ -12,6 +12,10 @@
 		color:darken($darkblue, 15%);
 		margin:0 0 5px 0;
 	}
+	&.checkbox label {
+		display: inline;
+		margin:0 5px 5px 0;
+	}
 
 	// Input
 	input[type="text"], input[type="password"],input[type="number"] {
