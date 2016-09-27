@@ -12,15 +12,19 @@
         <label for="url">Flywheel API key</label>
         <input type="password" id="url" ng-model="upload.apiKey" ng-change="upload.groups=[];upload.destinationGroup=null">
       </div>
+      <div class="form-group checkbox" >
+        <label for="asRoot">Admin Operation</label>
+        <input type="checkbox" id="asRoot" ng-model="upload.asRoot" ng-change="upload.reloadGroups()">
+      </div>
       <div class="form-group" ng-show="!upload.groups.length">
         <button class="button primary" ng-click="upload.loadGroups()" ng-disabled="!(upload.url && upload.apiKey)">Load groups</button>
       </div>
       <div class="form-group" ng-show="upload.groups.length">
-        <select ng-options="group as group.name for group in upload.groups" ng-model="upload.destinationGroup" >
+        <select ng-options="group as group.name for group in upload.groups" ng-model="upload.destinationGroup" ng-change="upload.loadProjects()">
           <option value="" ng-if="!upload.destinationGroup">- Select Group -</option>
         </select>
       </div>
-      <div class="margin-40"></div>
+      <div class="margin-40 warning">{{upload.projectWarning}}</div>
       <button class="button secondary" ng-click="upload.upload()" ng-disabled="!upload.destinationGroup">Upload to Flwheel.io</button>
     </div>
   </div>

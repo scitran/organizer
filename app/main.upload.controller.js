@@ -10,12 +10,42 @@ uploadCtrl.$inject = ['$rootScope', '$timeout', 'organizerStore', 'organizerUplo
 function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   /*jshint validthis: true */
   const vm = this;
+  vm.projectWarning = '';
+  vm.asRoot = false;
   vm.url = 'docker.local.flywheel.io:8443';
   vm.loadGroups = function loadGroups() {
     if (vm.url && vm.apiKey){
-      organizerUpload.loadGroups(vm.url, vm.apiKey, true).then(function(groups){
+      organizerUpload.loadGroups(vm.url, vm.apiKey, vm.asRoot).then(function(groups){
         console.log(groups);
         vm.groups = JSON.parse(groups);
+        $rootScope.$apply();
+      },
+      function(err) {
+        throw err;
+      }
+    );
+    }
+  };
+  vm.reloadGroups = function reloadGroups() {
+    if (vm.groups.length) {
+      vm.loadGroups();
+      vm.destinationGroup = null;
+    }
+  };
+  vm.loadProjects = function loadProjects() {
+    if (vm.url && vm.apiKey){
+      console.log(vm.destinationGroup);
+      organizerUpload.loadProjects(vm.url, vm.apiKey, vm.destinationGroup._id, vm.asRoot).then(function(projects){
+        vm.projects = JSON.parse(projects);
+        console.log(vm.projects);
+        const intersection = vm.projects.filter((p) => {
+          return organizerStore.get().projects.find((p1) => {
+            return (p1.label.toLowerCase() === p.label.toLowerCase());
+          });
+        }).map((p) => p.label);
+        if (intersection.length) {
+          vm.projectWarning = `Some of the projects (${intersection}) already exist!`;
+        }
         $rootScope.$apply();
       },
       function(err) {
@@ -82,7 +112,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
               content: zip,
               name: filename
             }];
-            organizerUpload.upload(vm.url, files, metadata, vm.apiKey, true).then(()=>{
+            organizerUpload.upload(vm.url, files, metadata, vm.apiKey, vm.asRoot).then(()=>{
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
               if (progress.state >= 100.0){
