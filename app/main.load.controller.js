@@ -13,6 +13,9 @@ function loadCtrl(steps, organizerStore, dicom) {
   /*jshint validthis: true */
   const vm = this;
   vm.selectFolder = selectFolder;
+  if (organizerStore.get().loaded.size){
+    steps.complete();
+  }
   function selectFolder() {
     ipc.send('open-file-dialog', steps.current());
     console.log(steps.current());
