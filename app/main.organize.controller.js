@@ -12,8 +12,11 @@ function organizeCtrl(steps, organizerStore){
   /*jshint validthis: true */
   const vm = this;
   const loaded = organizerStore.get().loaded;
-  loaded.size = 0;
-  updateTable();
+  if (!organizerStore.get().rawDicoms){
+    vm.projects = organizerStore.get().projects;
+  } else {
+    updateTable();
+  }
   vm.handleKeyOnInput = handleKeyOnInput;
   vm.humanReadableSize = humanReadableSize;
   vm.select = select;
@@ -74,10 +77,8 @@ function organizeCtrl(steps, organizerStore){
   }
 
   function updateTable() {
-    if (!organizerStore.get().rawDicoms){
-      vm.projects = organizerStore.get().projects;
-      return;
-    }
+
+    loaded.size = 0;
     const seriesDicoms = organizerStore.get().seriesDicoms||[];
     let sessions = {};
     let project = {
@@ -112,7 +113,6 @@ function organizeCtrl(steps, organizerStore){
     select(project);
     vm.projects = [project];
     organizerStore.update({projects: vm.projects, rawDicoms: false});
-    vm.loaded = true;
   }
   function handleKeyOnInput(container, field, event) {
     if (!container['_' + field]) {
