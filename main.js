@@ -4,6 +4,7 @@
 const {app, BrowserWindow, Menu} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
+app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
 
 
 
