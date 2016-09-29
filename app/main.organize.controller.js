@@ -91,21 +91,36 @@ function organizeCtrl(steps, organizerStore){
           children: {},
           sessionTimestamp: dicom.sessionTimestamp,
           patientID: dicom.patientID,
-          parent: project
+          parent: project,
+          labels: {},
+          acquisitionsUID: {}
         };
       }
-      let acquisitions = sessions[dicom.sessionUID].children;
-      if (!acquisitions.hasOwnProperty(dicom.acquisitionUID)) {
-        acquisitions[dicom.acquisitionUID] = {
+      const acquisitions = sessions[dicom.sessionUID].children;
+      const acquisitionsUID = sessions[dicom.sessionUID].acquisitionsUID;
+      const labels = sessions[dicom.sessionUID].labels;
+      if (!acquisitionsUID.hasOwnProperty(dicom.acquisitionUID)) {
+        if (acquisitions.hasOwnProperty(dicom.acquisitionLabel)) {
+          const labelCount = labels[dicom.acquisitionLabel];
+          labels[dicom.acquisitionLabel] += 1;
+          dicom.acquisitionLabel = dicom.acquisitionLabel + ' ' + labelCount;
+        } else {
+          labels[dicom.acquisitionLabel] = 1;
+        }
+        acquisitions[dicom.acquisitionLabel] = {
           filepaths: [],
           acquisitionLabel: dicom.acquisitionLabel,
+          acquisitionUID: dicom.acquisitionUID,
           acquisitionTimestamp: dicom.acquisitionTimestamp,
           count: 0,
           size: 0,
           parent: sessions[dicom.sessionUID]
         };
+        acquisitionsUID[dicom.acquisitionUID] = dicom.acquisitionLabel;
+      } else {
+        dicom.acquisitionLabel = acquisitionsUID[dicom.acquisitionUID];
       }
-      let acquisition = acquisitions[dicom.acquisitionUID];
+      let acquisition = acquisitions[dicom.acquisitionLabel];
       acquisition.count += 1;
       acquisition.size += dicom.size;
       acquisition.filepaths.push(dicom.path);

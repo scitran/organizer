@@ -55,9 +55,9 @@ function projectsService(fileSystemQueues) {
           waitFor: projectDir_
         });
         allPromises.push(sessionDir_);
-        Object.keys(session.children).forEach((acquisitionUID) => {
-          const acqPath = sessionPath + '/' + acquisitionUID;
-          const acquisition = session.children[acquisitionUID];
+        Object.keys(session.children).forEach((acquisitionLabel) => {
+          const acqPath = sessionPath + '/' + acquisitionLabel;
+          const acquisition = session.children[acquisitionLabel];
           if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
             return;
           }
@@ -67,7 +67,7 @@ function projectsService(fileSystemQueues) {
             waitFor: sessionDir_
           });
           const archivePromise = createZip(acquisition.filepaths);
-          const zipPath = acqPath + '/' + acquisitionUID + '.zip';
+          const zipPath = acqPath + '/' + acquisition.acquisitionUID + '.zip';
           allPromises.push(fileSystemQueues.append({
             operation: 'write',
             path: zipPath,
