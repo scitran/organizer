@@ -43,7 +43,7 @@ Each of these views has its own controller.
 ## upload view
 
 
-# Rxjs basics
+# RxJS basics
 
 The most important concept to understand is the one of "observable" which is an object emitting messages in a predictable but asynchronous sequence.
 It helps in controlling async list of events: a typical example could be user click events.
