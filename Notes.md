@@ -124,6 +124,6 @@ input.trigger('click');
 
 This cleanly separates what is selected of the original observable from what is executed on the resulting observable giving composability and flexibility.
 
-This is the basic elements used of Rxjs in the Organizer. A good tutorial is http://reactivex.io/learnrx/
+These are the basic elements used of Rxjs in the Organizer. A good tutorial is http://reactivex.io/learnrx/
 
 
