@@ -27,4 +27,5 @@ function mainCtrl($rootScope, steps, organizerStore){
   });
   vm.progress = organizerStore.get().progress;
   vm.success = organizerStore.get().success;
+  vm.busy = organizerStore.get().busy;
 }

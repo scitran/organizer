@@ -23,7 +23,7 @@
 
 	<footer>
     <div ng-show="main.success.state" class="warning">
-      <div ng-if="main.success.state==='success'" class="success">Success!</div>
+      <div ng-if="main.success.state==='success'" class="success">Success{{main.success.reason}}</div>
       <div ng-if="main.success.state==='failure'" class="failure">Failure{{main.success.reason}}</div>
     </div>
 		<!-- Progress Bar -->
@@ -32,7 +32,7 @@
 		</div>
 
 		<!-- Buttons -->
-		<a class="button" ng-show="steps.hasPrev()" ng-click="steps.back()">Go Back</a>
-		<button class="button primary" ng-disabled="!steps.isComplete(steps.current())" ng-show="steps.hasNext()" ng-click="steps.next()"><strong>Next Step</strong></button>
+		<button class="button" ng-show="steps.hasPrev()" ng-click="steps.back()" ng-disabled="main.busy.state">Go Back</button>
+		<button class="button primary" ng-disabled="!steps.isComplete(steps.current()) || main.busy.state" ng-show="steps.hasNext()" ng-click="steps.next()"><strong>Next Step</strong></button>
 	</footer>
 </div>

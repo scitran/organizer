@@ -72,18 +72,23 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
               header: convertHeaderToObject(parsed.dp)
             };
           },
-          function() {
-            return {path: f};
+          function(err) {
+            return {
+              path: f,
+              err: err
+            };
           }
         );
       }
-    ).filter(
+    )
+    .map(
       (o) => {
         progress.state += increment;
         $rootScope.$apply();
-        return o.header !== undefined;
+        return o;
       }
-    ).doOnCompleted(() => {
+    )
+    .doOnCompleted(() => {
       progress.state = 0;
       $rootScope.$apply();
     });
@@ -98,21 +103,33 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     }
     const obsFiles$ = dirListObs(path);
     let count = 0;
+    const dicoms = [];
+    const errors = [];
     obsFiles$.subscribe(
-      function() {
-        count += 1;
+      function(elem) {
+        if (elem.err) {
+          errors.push(elem);
+        } else {
+          count += 1;
+        }
       },
       function(err) { throw err;},
       function() {
         console.log(count);
-        const dicoms$ = parseDicoms(obsFiles$, count);
+        const dicoms$ = parseDicoms(
+          obsFiles$.filter(elem => !elem.err).map(elem => elem.path),
+          count
+        );
 
         const start = Date.now();
-        const dicoms = [];
 
         dicoms$.subscribe(
           function(dicom) {
-            dicoms.push(dicom);
+            if (dicom.err){
+              errors.push(dicom);
+            } else {
+              dicoms.push(dicom);
+            }
           },
           function (err) {
             subject.onError(err);
@@ -120,6 +137,10 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
           },
           function () {
             subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
+            if (errors.length) {
+              subject.onNext({error: `There have been ${errors.length} errors`});
+              console.log(errors);
+            }
             console.log(dicoms.length);
             console.log(dicoms);
             subject.onNext(dicoms);

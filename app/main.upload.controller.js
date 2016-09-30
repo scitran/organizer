@@ -58,6 +58,8 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   vm.upload = function upload() {
     console.log(vm.url);
     let projects = organizerStore.get().projects;
+    const busy = organizerStore.get().busy;
+    busy.state = true;
     projects.forEach((p) => {
       if (p.state !== 'checked' && p.state !== 'indeterminate'){
         return;
@@ -120,6 +122,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
                 $timeout(function(){
                   progress.state = 0;
                   $rootScope.$apply();
+                  busy.state = false;
                 }, 1000);
               }
               $rootScope.$apply();

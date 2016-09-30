@@ -25,7 +25,7 @@
         </select>
       </div>
       <div class="margin-40 warning">{{upload.projectWarning}}</div>
-      <button class="button secondary" ng-click="upload.upload()" ng-disabled="!upload.destinationGroup">Upload to Flwheel.io</button>
+      <button class="button secondary" ng-click="upload.upload()" ng-disabled="!upload.destinationGroup || main.busy.state">Upload to Flwheel.io</button>
     </div>
   </div>
 </section>
