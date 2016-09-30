@@ -29,13 +29,15 @@ header {
 		font-size:0;
 
 		// Links
-		a {
+		a, button {
 			display:inline-block;
 			font-size:14px;
 			color:#FFF;
 			color:rgba(255, 255, 255, .6);
 			text-decoration:none;
 			padding:22px 20px 24px;
+			border: none;
+			background-color: transparent;
 
 			// Hover
 			&:hover {

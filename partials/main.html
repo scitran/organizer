@@ -3,19 +3,39 @@
   <header>
   <!-- <img src="img/logo.png" class="logo"> -->
 	<div class="progress" >
-	  <a ng-class="{active: steps.isActive('main.load')}" ng-click="steps.go('main.load')" ng-show="steps.isComplete('main.load') || steps.isActive('main.load')">
+	  <button
+      ng-class="{active: steps.isActive('main.load')}"
+      ng-click="steps.go('main.load')"
+      ng-show="steps.isComplete('main.load') || steps.isActive('main.load')"
+      ng-disabled="main.busy.state"
+    >
       <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.load'), 'fa-check': !steps.isActive('main.load')}"></span>Load Data
-    </a>
+    </button>
 	  <!-- <a ng-class="{active: $state.is('main.format')}" ng-click="$state.go('main.format')"><span class="fa fa-circle-o"></span>Select Format</a> -->
-	  <a ng-class="{active: steps.isActive('main.organize')}" ng-show="steps.isComplete('main.organize') || steps.isActive('main.organize')" ng-click="steps.go('main.organize')">
+	  <button
+      ng-class="{active: steps.isActive('main.organize')}"
+      ng-show="steps.isComplete('main.organize') || steps.isActive('main.organize')"
+      ng-click="steps.go('main.organize')"
+      ng-disabled="main.busy.state"
+    >
       <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.organize'), 'fa-check': !steps.isActive('main.organize')}"></span>Organize Data
-    </a>
-    <a ng-class="{active: steps.isActive('main.save')}" ng-click="steps.go('main.save')" ng-show="steps.isComplete('main.save') || steps.isActive('main.save')">
+    </button>
+    <button
+      ng-class="{active: steps.isActive('main.save')}"
+      ng-click="steps.go('main.save')"
+      ng-show="steps.isComplete('main.save') || steps.isActive('main.save')"
+      ng-disabled="main.busy.state"
+    >
       <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.save'), 'fa-check': !steps.isActive('main.save')}"></span>Save Data
-    </a>
-	  <a ng-class="{active: steps.isActive('main.upload')}" ng-click="steps.go('main.upload')" ng-show="steps.isComplete('main.upload') || steps.isActive('main.upload')">
+    </button>
+	  <button
+      ng-class="{active: steps.isActive('main.upload')}"
+      ng-click="steps.go('main.upload')"
+      ng-show="steps.isComplete('main.upload') || steps.isActive('main.upload')"
+      ng-disabled="main.busy.state"
+    >
       <span class="fa" ng-class="{'fa-circle-o': steps.isActive('main.upload'), 'fa-check': !steps.isActive('main.upload')}"></span>Upload Data
-    </a>
+    </button>
 	</div>
   </header>
 
