@@ -12,7 +12,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   const vm = this;
   vm.projectWarning = '';
   vm.asRoot = false;
-  vm.url = 'docker.local.flywheel.io:8443';
+  vm.url = '';
   vm.loadGroups = function loadGroups() {
     if (vm.url && vm.apiKey){
       organizerUpload.loadGroups(vm.url, vm.apiKey, vm.asRoot).then(function(groups){
