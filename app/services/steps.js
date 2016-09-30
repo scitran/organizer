@@ -63,10 +63,13 @@ function steps($state) {
     return !!(_steps[step]||{}).isActive;
   }
   function go(step) {
+    let _state = current();
+    if (step === _state){
+      return;
+    }
     if (!isComplete(step)) {
       throw 'can\'t go back to a step that hasn\'t been completed';
     }
-    let _state = current();
     _steps[_state].isActive = false;
     while (step != _state){
       _steps[_state].isComplete = false;
