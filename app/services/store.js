@@ -19,6 +19,9 @@ function organizerStore() {
     },
     success: {
       state: ''
+    },
+    busy: {
+      state: false
     }
   };
   const changed = new Rx.Subject();
