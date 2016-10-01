@@ -6,9 +6,9 @@ const ipc = require('electron').ipcRenderer;
 
 app.controller('loadCtrl', loadCtrl);
 
-loadCtrl.$inject = ['$rootScope', 'steps', 'organizerStore', 'dicom'];
+loadCtrl.$inject = ['$timeout', '$rootScope', 'steps', 'organizerStore', 'dicom'];
 
-function loadCtrl($rootScope, steps, organizerStore, dicom) {
+function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
   /*jshint validthis: true */
   const vm = this;
   vm.selectFolder = selectFolder;
@@ -20,6 +20,7 @@ function loadCtrl($rootScope, steps, organizerStore, dicom) {
     console.log(steps.current());
     ipc.once('selected-directory', function (event, path) {
       const busy = organizerStore.get().busy;
+      const success = organizerStore.get().success;
       busy.state = true;
       $rootScope.$apply();
       const subject = dicom.sortDicoms(path[0]);
@@ -35,7 +36,12 @@ function loadCtrl($rootScope, steps, organizerStore, dicom) {
             organizerStore.update({dicoms: dicomsOrMessage});
             steps.complete();
             busy.state = false;
+            success.state = 'success';
             $rootScope.$apply();
+            $timeout(function(){
+              success.state = '';
+              $rootScope.$apply();
+            }, 2000);
             steps.next();
           }
         },

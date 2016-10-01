@@ -5,9 +5,10 @@ const app = angular.module('app');
 
 app.controller('uploadCtrl', uploadCtrl);
 
-uploadCtrl.$inject = ['$rootScope', '$timeout', 'organizerStore', 'organizerUpload'];
+uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'organizerUpload'];
 
-function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
+// jshint maxparams:6
+function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload){
   /*jshint validthis: true */
   const vm = this;
   vm.projectWarning = '';
@@ -56,7 +57,7 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
   };
 
   vm.upload = function upload() {
-    console.log(vm.url);
+    const success = organizerStore.get().success;
     let projects = organizerStore.get().projects;
     const busy = organizerStore.get().busy;
     busy.state = true;
@@ -118,15 +119,29 @@ function uploadCtrl($rootScope, $timeout, organizerStore, organizerUpload){
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
               if (progress.state >= 100.0){
-                progress.size = 0;
+                progress.state = 0;
+                success.state = 'success';
                 $timeout(function(){
-                  progress.state = 0;
-                  $rootScope.$apply();
+                  success.state = '';
                   busy.state = false;
-                }, 1000);
+                  $rootScope.$apply();
+                }, 2000);
               }
               $rootScope.$apply();
-            });
+            },
+            (err) => {
+              success.state = 'failure';
+              console.log(err);
+              success.reason = ': an error occurred';
+              busy.state = false;
+              $rootScope.$apply();
+              $scope.$on('$destroy', function(){
+                success.state = '';
+                progress.state = 0;
+                $rootScope.$apply();
+              });
+            }
+          );
           });
         });
       });
