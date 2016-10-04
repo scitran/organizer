@@ -99,6 +99,7 @@ function organizeCtrl(steps, organizerStore){
       const acquisitions = sessions[dicom.sessionUID].children;
       const acquisitionsUID = sessions[dicom.sessionUID].acquisitionsUID;
       const labels = sessions[dicom.sessionUID].labels;
+      dicom.acquisitionLabel = dicom.acquisitionLabel.replace(/\//g, ' ');
       if (!acquisitionsUID.hasOwnProperty(dicom.acquisitionUID)) {
         if (acquisitions.hasOwnProperty(dicom.acquisitionLabel)) {
           const labelCount = labels[dicom.acquisitionLabel];
