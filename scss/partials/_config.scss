@@ -16,3 +16,7 @@ $orange:            #fb8043;
 $orangeborder:      #cf6a38;
 $lightblue:         #e7e9ef;
 $lighterblue:       lighten(#e7e9ef, 5%);
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}

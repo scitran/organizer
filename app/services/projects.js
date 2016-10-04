@@ -35,6 +35,7 @@ function projectsService($rootScope, organizerStore, fileSystemQueues) {
     const progress = organizerStore.get().progress;
     const busy = organizerStore.get().busy;
     busy.state = true;
+    busy.reason = 'Saving data...';
     $rootScope.$apply();
     const increment = 100.0/organizerStore.get().loaded.size;
     projects.forEach((p) => {
@@ -80,7 +81,7 @@ function projectsService($rootScope, organizerStore, fileSystemQueues) {
           }).then(function(result){
             progress.state += acquisition.size*increment;
             $rootScope.$apply();
-            return result
+            return result;
           }));
         });
       });
@@ -88,6 +89,7 @@ function projectsService($rootScope, organizerStore, fileSystemQueues) {
     return Promise.all(allPromises).then(function(results){
       progress.state = 0;
       busy.state = false;
+      busy.reason = '';
       $rootScope.$apply();
       return results;
     });

@@ -42,6 +42,9 @@
 <div ui-view class="full-view"></div>
 
 	<footer>
+    <div ng-show="main.busy.state===true && !main.progress.state" class="warning">
+      <div class="message">{{main.busy.reason}}</div>
+    </div>
     <div ng-show="main.success.state" class="warning">
       <div ng-if="main.success.state==='success'" class="success">Success{{main.success.reason}}</div>
       <div ng-if="main.success.state==='failure'" class="failure">Failure{{main.success.reason}}</div>

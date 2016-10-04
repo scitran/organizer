@@ -61,6 +61,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
     let projects = organizerStore.get().projects;
     const busy = organizerStore.get().busy;
     busy.state = true;
+    busy.reason = 'Uploading data...';
     projects.forEach((p) => {
       if (p.state !== 'checked' && p.state !== 'indeterminate'){
         return;
@@ -121,9 +122,11 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
               if (progress.state >= 100.0){
                 progress.state = 0;
                 success.state = 'success';
+                busy.state = false;
+                busy.reason = '';
                 $timeout(function(){
                   success.state = '';
-                  busy.state = false;
+
                   $rootScope.$apply();
                 }, 2000);
               }

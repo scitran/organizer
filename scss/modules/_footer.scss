@@ -45,7 +45,10 @@ footer {
 			&.warning {
 				color: $orange;
 			}
+			&.message {
+				color: $darkblue;
+				animation: blinker 0.8s linear infinite;
+			}
 		}
 	}
-
 }
