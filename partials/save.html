@@ -4,12 +4,12 @@
     <div class="card half">
       <h2>Save to Disk</h2>
       <p>Select a folder and download your organized dataset.</p>
-      <a href="" class="button primary" ng-click="save.save()">Save to Hard Drive</a>
+      <button href="" class="button primary" ng-click="save.save()" ng-disabled="main.busy.state">Save to Hard Drive</button>
     </div>
     <div class="card half">
       <h2>Upload to Flywheel.io</h2>
       <p>Select the URL where you want to upload your organized dataset.</p>
-      <a href="" class="button secondary" ng-click="steps.next()">Upload to Flwheel.io</a>
+      <button href="" class="button secondary" ng-click="steps.next()" ng-disabled="main.busy.state">Upload to Flwheel.io</button>
     </div>
   </div>
 </section>

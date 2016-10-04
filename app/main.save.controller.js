@@ -38,6 +38,8 @@ function saveCtrl($scope, $rootScope, $timeout, steps, organizerStore, projectsS
           $rootScope.$apply();
           $scope.$on('$destroy', function(){
             success.state = '';
+            success.reason = '';
+            $rootScope.$apply();
           });
         }
       );

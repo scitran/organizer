@@ -6,9 +6,9 @@ const ipc = require('electron').ipcRenderer;
 
 app.controller('loadCtrl', loadCtrl);
 
-loadCtrl.$inject = ['$rootScope', 'steps', 'organizerStore', 'dicom'];
+loadCtrl.$inject = ['$timeout', '$rootScope', 'steps', 'organizerStore', 'dicom'];
 
-function loadCtrl($rootScope, steps, organizerStore, dicom) {
+function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
   /*jshint validthis: true */
   const vm = this;
   vm.selectFolder = selectFolder;
@@ -19,7 +19,9 @@ function loadCtrl($rootScope, steps, organizerStore, dicom) {
     ipc.send('open-file-dialog', steps.current());
     console.log(steps.current());
     ipc.once('selected-directory', function (event, path) {
+      //organizerStore.update({errors: []});
       const busy = organizerStore.get().busy;
+      const success = organizerStore.get().success;
       busy.state = true;
       $rootScope.$apply();
       const subject = dicom.sortDicoms(path[0]);
@@ -28,14 +30,27 @@ function loadCtrl($rootScope, steps, organizerStore, dicom) {
           if (dicomsOrMessage.message !== undefined){
             console.log(dicomsOrMessage.message);
             organizerStore.update({message: dicomsOrMessage});
-          } else if (dicomsOrMessage.error !== undefined){
-            console.log(dicomsOrMessage.error);
-            organizerStore.update({error: dicomsOrMessage.error});
+          } else if (dicomsOrMessage.errors !== undefined){
+            console.log(dicomsOrMessage.errors);
+            organizerStore.update({errors: dicomsOrMessage.errors});
           } else {
             organizerStore.update({dicoms: dicomsOrMessage});
             steps.complete();
             busy.state = false;
+            const errorsLength = organizerStore.get().errors.length;
+            let messageDelay = 2000;
+            success.state = 'success';
+            if (errorsLength) {
+              success.state = 'warning';
+              success.reason = `There have been ${errorsLength} errors out of ${dicomsOrMessage.length + errorsLength} files`;
+              messageDelay = 5000;
+            }
             $rootScope.$apply();
+            $timeout(function(){
+              success.state = '';
+              success.reason = '';
+              $rootScope.$apply();
+            }, messageDelay);
             steps.next();
           }
         },

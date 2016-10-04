@@ -4,8 +4,7 @@ const app = angular.module('app');
 const {readFilePromise} = require('../common/util.js');
 const archiver = require('archiver');
 
-function projectsService(fileSystemQueues) {
-
+function projectsService($rootScope, organizerStore, fileSystemQueues) {
   return {
     save: save
   };
@@ -33,6 +32,11 @@ function projectsService(fileSystemQueues) {
   }
   function save(projects, path){
     const allPromises = [];
+    const progress = organizerStore.get().progress;
+    const busy = organizerStore.get().busy;
+    busy.state = true;
+    $rootScope.$apply();
+    const increment = 100.0/organizerStore.get().loaded.size;
     projects.forEach((p) => {
       if (p.state !== 'checked' && p.state !== 'indeterminate'){
         return;
@@ -73,12 +77,21 @@ function projectsService(fileSystemQueues) {
             path: zipPath,
             content_: archivePromise,
             waitFor: acqDir_
+          }).then(function(result){
+            progress.state += acquisition.size*increment;
+            $rootScope.$apply();
+            return result
           }));
         });
       });
     });
-    return Promise.all(allPromises);
+    return Promise.all(allPromises).then(function(results){
+      progress.state = 0;
+      busy.state = false;
+      $rootScope.$apply();
+      return results;
+    });
   }
 }
-projectsService.$inject = ['fileSystemQueues'];
+projectsService.$inject = ['$rootScope', 'organizerStore', 'fileSystemQueues'];
 app.factory('projectsService', projectsService);
