@@ -4,21 +4,53 @@ const angular = require('angular');
 const app = angular.module('app');
 
 const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
 const Rx = require('rx');
 const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
+const nifti = require('nifti-js');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
 
+const decompressForExt = {
+  '.gz': function gunzip(buffer) {
+    return zlib.gunzipSync(buffer);
+  }
+};
+
 function dicom($rootScope, organizerStore, fileSystemQueues) {
-  const parse = (filePath) => {
+  const parseHeadersForExt = {
+    '.nii': function(buffer) {
+      return nifti.parseNIfTIHeader(buffer);
+    },
+    '.dcm': function(buffer) {
+      return convertHeaderToObject(dicomParser.parseDicom(buffer));
+    }
+  };
+
+  const parseFile = (filePath) => {
     return fileSystemQueues.append({
       operation: 'read',
       path: filePath
     }).then(
-      function(dicomFileAsBuffer) {
-        const size = dicomFileAsBuffer.length * dicomFileAsBuffer.BYTES_PER_ELEMENT;
-        const dp = dicomParser.parseDicom(dicomFileAsBuffer);
-        return {dp: dp, size: size};
+      function(buffer) {
+        let ext = path.extname(filePath);
+        if (decompressForExt[ext]) {
+          buffer = decompressForExt[ext](buffer);
+          // now let's see what's after the compression extension
+          ext = path.extname(filePath.slice(0, filePath.length - ext.length));
+        }
+        const size = buffer.length * buffer.BYTES_PER_ELEMENT;
+        if (!parseHeadersForExt[ext]) {
+          throw Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
+        }
+        const header = parseHeadersForExt[ext](buffer);
+        return {
+          path: filePath,
+          contentExt: ext,
+          size: size,
+          header: header
+        };
       }
     );
   };
@@ -31,13 +63,10 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
   };
 
   const dicomDump = (filePath) => {
-    const dp = parse(filePath).dp;
+    const header = parseFile(filePath).header;
     let dump = [];
-    for (let key of Object.keys(dp.elements)) {
-      let tag = getTag(key);
-      let value = dp.string(key);
-      let line = (tag && (tag.name + ': ' + value)) || (key + ': ' + value);
-      dump.push(line);
+    for (let key of Object.keys(header)) {
+      dump.push(`${key}: ${header[key]}`);
     }
     return dump;
   };
@@ -62,14 +91,7 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     const progress = organizerStore.get().progress;
     return files.flatMap(
       (f) => {
-        return parse(f).then(
-          function(parsed) {
-            return {
-              path: f,
-              size: parsed.size,
-              header: convertHeaderToObject(parsed.dp)
-            };
-          },
+        return parseFile(f).catch(
           function(err) {
             return {
               path: f,

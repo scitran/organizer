@@ -61,6 +61,7 @@
     "css-loader": "^0.24.0",
     "archiver": "^1.0.1",
     "dicom-parser": "^1.7.4",
+    "nifti-js": "^1.0.1",
     "request": "^2.74.0",
     "rx": "^4.1.0"
   }
