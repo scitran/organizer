@@ -4,7 +4,12 @@
 const {app, BrowserWindow, Menu} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
-app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
+// On OS X this command line switch is helpful, particularly with hot
+// reloading. However, this seems to prevent the app from starting on
+// windows.
+if (process.platform === 'darwin') {
+  app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
+}
 
 
 
