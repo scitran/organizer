@@ -138,8 +138,8 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
           function () {
             subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
             if (errors.length) {
-              subject.onNext({error: `There have been ${errors.length} errors`});
-              console.log(errors);
+              subject.onNext({errors: errors});
+              //console.log(errors);
             }
             console.log(dicoms.length);
             console.log(dicoms);
