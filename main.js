@@ -6,7 +6,7 @@ const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
 
-
+process.env.USER_DATA_PATH = app.getPath('userData');
 
 ipc.on('open-file-dialog', function (event, arg) {
   const window = BrowserWindow.fromWebContents(event.sender);

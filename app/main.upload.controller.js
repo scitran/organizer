@@ -5,17 +5,18 @@ const app = angular.module('app');
 
 app.controller('uploadCtrl', uploadCtrl);
 
-uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'organizerUpload'];
+uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'organizerUpload', 'config'];
 
 // jshint maxparams:6
-function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload){
+function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload, config){
   /*jshint validthis: true */
   const vm = this;
   vm.projectWarning = '';
   vm.asRoot = false;
-  vm.url = '';
+  vm.url = config.getItem('url') || '';
   vm.loadGroups = function loadGroups() {
     if (vm.url && vm.apiKey){
+      config.setItem('url', vm.url);
       organizerUpload.loadGroups(vm.url, vm.apiKey, vm.asRoot).then(function(groups){
         console.log(groups);
         vm.groups = JSON.parse(groups);

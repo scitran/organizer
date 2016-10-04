@@ -17,6 +17,7 @@ const app = angular.module('app', [require('angular-ui-router')]);
 //const ipc  = require('electron').ipcRenderer;
 
 require('./filters/objLength.js');
+require('./services/config.js');
 require('./services/dicom.js');
 require('./services/steps.js');
 require('./services/store.js');
