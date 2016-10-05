@@ -17,9 +17,8 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
   }
   function selectFolder() {
     ipc.send('open-file-dialog', steps.current());
-    console.log(steps.current());
     ipc.once('selected-directory', function (event, path) {
-      //organizerStore.update({errors: []});
+      organizerStore.update({dicoms: [], errors: []});
       const busy = organizerStore.get().busy;
       const success = organizerStore.get().success;
       busy.state = true;
@@ -29,10 +28,8 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
       subject.subscribe(
         (dicomsOrMessage) => {
           if (dicomsOrMessage.message !== undefined){
-            console.log(dicomsOrMessage.message);
             organizerStore.update({message: dicomsOrMessage});
           } else if (dicomsOrMessage.errors !== undefined){
-            console.log(dicomsOrMessage.errors);
             organizerStore.update({errors: dicomsOrMessage.errors});
           } else {
             organizerStore.update({dicoms: dicomsOrMessage});

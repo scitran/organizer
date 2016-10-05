@@ -129,10 +129,8 @@ const mapBidsFolderToSeries = (files) => {
   };
   return files.reduce(
     function(pointers, f){
-      console.log(f.path);
       let parentPointer = pointers[f.parent];
       let pointer = createPointer(parentPointer.level, f);
-      console.log(parentPointer);
       if (pointer.level) {
         parentPointer[pointer.level].push(pointer);
         pointers[f.path] = pointer;

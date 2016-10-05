@@ -17,7 +17,6 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
   vm.loadGroups = function loadGroups() {
     if (vm.url && vm.apiKey){
       organizerUpload.loadGroups(vm.url, vm.apiKey, vm.asRoot).then(function(groups){
-        console.log(groups);
         vm.groups = JSON.parse(groups);
         $rootScope.$apply();
       },
@@ -35,10 +34,8 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
   };
   vm.loadProjects = function loadProjects() {
     if (vm.url && vm.apiKey){
-      console.log(vm.destinationGroup);
       organizerUpload.loadProjects(vm.url, vm.apiKey, vm.destinationGroup._id, vm.asRoot).then(function(projects){
         vm.projects = JSON.parse(projects);
-        console.log(vm.projects);
         const intersection = vm.projects.filter((p) => {
           return organizerStore.get().projects.find((p1) => {
             return (p1.label.toLowerCase() === p.label.toLowerCase());

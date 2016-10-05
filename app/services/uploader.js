@@ -109,8 +109,6 @@ function organizerUpload(apiQueues) {
         }
       }
     };
-    return apiQueues.append(message).then(function(body){
-      console.log(body);
-    });
+    return apiQueues.append(message);
   }
 }
