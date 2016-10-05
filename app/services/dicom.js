@@ -10,7 +10,6 @@ const dicomParser = require('dicom-parser');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
 
 function dicom($rootScope, organizerStore, fileSystemQueues) {
-  console.log(organizerStore);
   const parse = (filePath) => {
     return fileSystemQueues.append({
       operation: 'read',
@@ -58,7 +57,6 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
   };
 
   const parseDicoms = (files, count) => {
-    console.log(files);
     console.log(count);
     const increment = 100.0/count;
     const progress = organizerStore.get().progress;
@@ -139,10 +137,8 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
             subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
             if (errors.length) {
               subject.onNext({errors: errors});
-              //console.log(errors);
             }
             console.log(dicoms.length);
-            console.log(dicoms);
             subject.onNext(dicoms);
             subject.onCompleted();
           }

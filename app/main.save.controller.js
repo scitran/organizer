@@ -18,7 +18,6 @@ function saveCtrl($scope, $rootScope, $timeout, steps, organizerStore, projectsS
   vm.save = function save(){
     ipc.send('open-file-dialog', steps.current());
     ipc.once('selected-directory', function (event, path) {
-      console.log(path);
       let projects = organizerStore.get().projects;
       projectsService.save(projects, path[0]).then(
         function(){
