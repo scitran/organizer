@@ -21,6 +21,7 @@ const decompressForExt = {
 function dicom($rootScope, organizerStore, fileSystemQueues) {
   const parseHeadersForExt = {
     '.nii': function(buffer) {
+      // TODO write a function that converts this into proper headers.
       return nifti.parseNIfTIHeader(buffer);
     },
     '.dcm': function(buffer) {
