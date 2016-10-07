@@ -94,6 +94,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
           const filename = acquisitionUID + '.zip';
           const metadataAcq = {
             acquisition: {
+              'uid': acquisition.acquisitionUID,
               'label': acquisition.acquisitionLabel,
               'timestamp': acquisition.acquisitionTimestamp.ts,
               'files': [{
