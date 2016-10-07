@@ -5,10 +5,10 @@ const app = angular.module('app');
 
 app.controller('uploadCtrl', uploadCtrl);
 
-uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'organizerUpload', 'config'];
+uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'organizerUpload', 'zipQueues', 'config'];
 
-// jshint maxparams:6
-function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload, config){
+// jshint maxparams:7
+function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload, zipQueues, config){
   /*jshint validthis: true */
   const vm = this;
   vm.projectWarning = '';
@@ -109,7 +109,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
             metadataSes,
             metadataAcq
           ));
-          const zipPromise = organizerUpload.createZipBuffer(acquisition.filepaths, metadata);
+          const zipPromise = zipQueues.append({files: acquisition.filepaths});
           zipPromise.then(function(zip) {
             let files = [{
               content: zip,

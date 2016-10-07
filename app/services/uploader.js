@@ -1,9 +1,5 @@
-/*globals Buffer */
 'use strict';
 const angular = require('angular');
-const archiver = require('archiver');
-const {readFilePromise} = require('../common/util.js');
-
 const app = angular.module('app');
 
 app.factory('organizerUpload', organizerUpload);
@@ -13,7 +9,6 @@ organizerUpload.$inject = ['apiQueues'];
 function organizerUpload(apiQueues) {
   const service = {
     upload: upload,
-    createZipBuffer: createZipBuffer,
     testcall: testcall,
     loadGroups: loadGroups,
     loadProjects: loadProjects
@@ -53,36 +48,6 @@ function organizerUpload(apiQueues) {
       }
     };
     return apiQueues.append({options: options});
-  }
-  function createZipBuffer(files) {
-    var promise = new Promise(function(resolve, reject){
-      let archive = archiver.create('zip', {});
-      let bufs = [];
-      archive.on('data', function(data){
-        bufs.push(data);
-      });
-      archive.on('end', function() {
-        resolve(Buffer.concat(bufs));
-        console.log('zip process completed');
-      });
-      archive.on('error', function(err) {
-        console.log('error during zip process: ' + err);
-        reject('error during zip process: ' + err);
-      });
-      var p = new Promise(function(resolve){
-        resolve(archive);
-      });
-      files.reduce(function(p, f) {
-        return p.then(function(archive){
-          return readFilePromise(f).then(function(rs){
-            return archive.append(rs, {name: f.split('/').pop()});
-          });
-        });
-      }, p).then(function(archive){
-        archive.finalize();
-      });
-    });
-    return promise;
   }
   function upload(instance, files, metadata, apiKey, root) {
     var formData = {

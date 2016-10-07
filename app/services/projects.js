@@ -1,35 +1,11 @@
 'use strict';
 const angular = require('angular');
 const app = angular.module('app');
-const {readFilePromise} = require('../common/util.js');
-const archiver = require('archiver');
 
-function projectsService($rootScope, organizerStore, fileSystemQueues) {
+function projectsService($rootScope, organizerStore, fileSystemQueues, zipQueues) {
   return {
     save: save
   };
-  function createZip(files) {
-    var promise = new Promise(function(resolve){
-      let archive = archiver.create('zip', {});
-      archive.on('end', function() {
-        console.log('zip process completed');
-      });
-      var p = new Promise(function(resolve){
-        resolve(archive);
-      });
-      files.reduce(function(p, f) {
-        return p.then(function(archive){
-          return readFilePromise(f).then(function(rs){
-            return archive.append(rs, {name: f.split('/').pop()});
-          });
-        });
-      }, p).then(function(archive){
-        archive.finalize();
-        resolve(archive);
-      });
-    });
-    return promise;
-  }
   function save(projects, path){
     const allPromises = [];
     const progress = organizerStore.get().progress;
@@ -71,13 +47,16 @@ function projectsService($rootScope, organizerStore, fileSystemQueues) {
             path: acqPath,
             waitFor: sessionDir_
           });
-          const archivePromise = createZip(acquisition.filepaths);
+          const archivePromise = acqDir_.then(
+            function(){
+              return zipQueues.append({files: acquisition.filepaths, store: true});
+            }
+          );
           const zipPath = acqPath + '/' + acquisition.acquisitionUID + '.zip';
           allPromises.push(fileSystemQueues.append({
             operation: 'write',
             path: zipPath,
-            content_: archivePromise,
-            waitFor: acqDir_
+            waitFor: archivePromise
           }).then(function(result){
             progress.state += acquisition.size*increment;
             $rootScope.$apply();
@@ -95,5 +74,5 @@ function projectsService($rootScope, organizerStore, fileSystemQueues) {
     });
   }
 }
-projectsService.$inject = ['$rootScope', 'organizerStore', 'fileSystemQueues'];
+projectsService.$inject = ['$rootScope', 'organizerStore', 'fileSystemQueues', 'zipQueues'];
 app.factory('projectsService', projectsService);
