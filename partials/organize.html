@@ -52,6 +52,28 @@
         </table>
       </div>
     </div>
+    <div class="toggle" ng-repeat="(key, fileErrors) in organize.fileErrors">
+      <h3 class="project-title" ng-click="fileErrors.expanded = !fileErrors.expanded">
+        <span class="fa" ng-class="{'fa-sort-up': !fileErrors.expanded, 'fa-sort-down': fileErrors.expanded}">
+        </span>{{fileErrors.title}} ({{fileErrors.files.length}} total)
+      </h3>
+      <table class="clickable" ng-if="fileErrors.expanded">
+        <thead>
+          <th>File name</th>
+          <th>Cause of error</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="file in fileErrors.files">
+            <td>{{file.basename}}</td>
+            <td ng-if="file.message">{{file.message}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <div>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- <div class="sidebar">
     <h2>Filter &amp; Sort</h2>

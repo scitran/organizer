@@ -17,6 +17,7 @@ function organizeCtrl(steps, organizerStore){
   } else {
     updateTable();
   }
+  vm.fileErrors = organizerStore.get().fileErrors;
   vm.handleKeyOnInput = handleKeyOnInput;
   vm.humanReadableSize = humanReadableSize;
   vm.select = select;

@@ -3,6 +3,7 @@
 const angular = require('angular');
 const app = angular.module('app');
 const ipc = require('electron').ipcRenderer;
+const path = require('path');
 
 app.controller('loadCtrl', loadCtrl);
 
@@ -17,14 +18,14 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
   }
   function selectFolder() {
     ipc.send('open-file-dialog', steps.current());
-    ipc.once('selected-directory', function (event, path) {
+    ipc.once('selected-directory', function (event, paths) {
       organizerStore.update({dicoms: [], errors: []});
       const busy = organizerStore.get().busy;
       const success = organizerStore.get().success;
       busy.state = true;
       busy.reason = 'Loading data...';
       $rootScope.$apply();
-      const subject = dicom.sortDicoms(path[0]);
+      const subject = dicom.sortDicoms(paths[0]);
       subject.subscribe(
         (dicomsOrMessage) => {
           if (dicomsOrMessage.message !== undefined){
@@ -43,6 +44,15 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
             if (errorsLength) {
               success.state = 'warning';
               success.reason = `There have been ${errorsLength} errors out of ${dicomsOrMessage.length + errorsLength} files`;
+              organizerStore.get().fileErrors.parsing = {
+                title: 'Parsing Errors',
+                files: errors.map(function(e) {
+                  return {
+                    basename: path.relative(paths[0], e.path),
+                    message: e.err.message || e.err
+                  };
+                })
+              };
               organizerStore.update({errors: []});
               messageDelay = 5000;
             }

@@ -21,7 +21,8 @@ function organizerStore() {
     },
     busy: {
       state: false
-    }
+    },
+    fileErrors: {}
   };
   const service = {
     get: get,
