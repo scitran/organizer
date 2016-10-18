@@ -7,6 +7,24 @@ app.factory('organizerUpload', organizerUpload);
 organizerUpload.$inject = ['apiQueues'];
 
 function organizerUpload(apiQueues) {
+  function _request(options) {
+    let url = options.url;
+    if (url[0] === '/' && options.instance) {
+      url = `https://${options.instance}/api${options.url}`;
+    }
+    return apiQueues.append({
+      options: Object.assign({}, options, {
+        url,
+        headers: Object.assign({
+          'Authorization':  'scitran-user ' + options.apiKey
+        }, options.headers),
+        agentOptions: Object.assign({
+          rejectUnauthorized: false
+        }, options.agentOptions)
+      })
+    });
+  }
+
   const service = {
     upload: upload,
     testcall: testcall,
@@ -24,30 +42,20 @@ function organizerUpload(apiQueues) {
     return apiQueues.append({options: options});
   }
   function loadGroups(instance, apiKey, root){
-    const options = {
+    return _request({
       method: 'GET',
-      url: `https://${instance}/api/groups?root=${root||false}`,
-      headers: {
-        'Authorization':  'scitran-user ' + apiKey
-      },
-      agentOptions: {
-        rejectUnauthorized: false
-      }
-    };
-    return apiQueues.append({options: options});
+      instance,
+      apiKey,
+      url: `/groups?root=${root||false}`
+    });
   }
   function loadProjects(instance, apiKey, group, root){
-    const options = {
+    return _request({
       method: 'GET',
-      url: `https://${instance}/api/groups/${group}/projects?root=${root||false}`,
-      headers: {
-        'Authorization':  'scitran-user ' + apiKey
-      },
-      agentOptions: {
-        rejectUnauthorized: false
-      }
-    };
-    return apiQueues.append({options: options});
+      instance,
+      apiKey,
+      url: `/groups/${group}/projects?root=${root||false}`
+    });
   }
   function upload(instance, files, metadata, apiKey, root) {
     var formData = {
@@ -61,19 +69,13 @@ function organizerUpload(apiQueues) {
         }
       };
     }
-    let message = {
-      options: {
-        method: 'POST',
-        url: `https://${instance}/api/upload/label?root=${root||false}`,
-        formData: formData,
-        headers: {
-          'Authorization':  'scitran-user ' + apiKey
-        },
-        agentOptions: {
-          rejectUnauthorized: false
-        }
-      }
-    };
-    return apiQueues.append(message);
+    return _request({
+      method: 'POST',
+      instance,
+      apiKey,
+      url: `/upload/label?root=${root||false}`,
+      throwForStatus: true,
+      formData: formData
+    });
   }
 }
