@@ -2,8 +2,10 @@
 
 const angular = require('angular');
 const app = angular.module('app');
-const ipc = require('electron').ipcRenderer;
 const path = require('path');
+const {ipcPromiseCreator} = require('./common/ipc');
+
+const openFileDialog = ipcPromiseCreator('open-file-dialog', 'selected-directory');
 
 app.controller('loadCtrl', loadCtrl);
 
@@ -17,8 +19,7 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
     steps.complete();
   }
   function selectFolder() {
-    ipc.send('open-file-dialog', steps.current());
-    ipc.once('selected-directory', function (event, paths) {
+    openFileDialog(steps.current()).then(function(paths) {
       organizerStore.update({dicoms: [], errors: []});
       const busy = organizerStore.get().busy;
       const success = organizerStore.get().success;
