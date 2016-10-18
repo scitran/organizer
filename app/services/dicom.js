@@ -11,6 +11,15 @@ const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
 const nifti = require('nifti-js');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
+const crypto = require('crypto');
+const filetypes = require('../common/filetypes.json');
+
+const extToScitranType = {};
+for (const type of Object.keys(filetypes)) {
+  for (const ext of filetypes[type]) {
+    extToScitranType[ext] = type;
+  }
+}
 
 const decompressForExt = {
   '.gz': function gunzip(buffer) {
@@ -36,6 +45,8 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     }).then(
       function(buffer) {
         let ext = path.extname(filePath);
+        // we compute hash before unzipping because that's what we will upload.
+        const hash = 'v0-sha384-' + crypto.createHash('sha384').update(buffer).digest('hex');
         if (decompressForExt[ext]) {
           buffer = decompressForExt[ext](buffer);
           // now let's see what's after the compression extension
@@ -43,14 +54,21 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
         }
         const size = buffer.length * buffer.BYTES_PER_ELEMENT;
         if (!parseHeadersForExt[ext]) {
-          throw Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
+          throw new Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
         }
-        const header = parseHeadersForExt[ext](buffer);
+        const header = parseHeadersForExt[ext](buffer, filePath);
+        const type = extToScitranType[ext];
+        if (!type) {
+          throw new Error(`Invalid extension ${ext} for file ${filePath}`);
+        }
         return {
           path: filePath,
           contentExt: ext,
-          size: size,
-          header: header
+          content: buffer,
+          size,
+          hash,
+          type,
+          header
         };
       }
     );

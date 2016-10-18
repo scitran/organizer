@@ -59,17 +59,15 @@ const mapToSeriesRow = (dicoms) => dicoms.map(
     } else {
       acquisitionUID = seriesUID;
     }
-    return {
-      path: dicom.path,
-      size: dicom.size,
+    // copy all properties over so that we don't pass them individually
+    return Object.assign({
       sessionUID: sessionUID,
       patientID: header.PatientID,
       sessionTimestamp: getSessionTimestamp(header),
       acquisitionUID: acquisitionUID,
       acquisitionLabel: acquisitionLabel,
-      acquisitionTimestamp: getAcquisitionTimestamp(header),
-      header: dicom.header
-    };
+      acquisitionTimestamp: getAcquisitionTimestamp(header)
+    }, dicom);
   }
 ).filter(
   (o) => {

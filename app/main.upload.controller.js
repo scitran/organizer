@@ -2,6 +2,7 @@
 
 const angular = require('angular');
 const app = angular.module('app');
+const path = require('path');
 
 app.controller('uploadCtrl', uploadCtrl);
 
@@ -91,31 +92,58 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
           if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
             return;
           }
-          const filename = acquisitionUID + '.zip';
+          if (!acquisition.parsedFiles.length) {
+            // We skip upload for acquisitions with no new files.
+            return;
+          }
+          const dicomPaths = [];
+          const filesForUpload = [];
           const metadataAcq = {
             acquisition: {
               'uid': acquisition.acquisitionUID,
               'label': acquisition.acquisitionLabel,
               'timestamp': acquisition.acquisitionTimestamp.ts,
-              'files': [{
-                name: filename,
-                type: 'dicom'
-              }]
+              'files': []
             }
           };
-          const metadata = JSON.stringify(Object.assign(
-            {},
-            metadataBase,
-            metadataSes,
-            metadataAcq
-          ));
-          const zipPromise = zipQueues.append({files: acquisition.filepaths});
+          for (const parsedFile of acquisition.parsedFiles) {
+            if (parsedFile.type === 'dicom') {
+              dicomPaths.push(parsedFile.path);
+            } else {
+              const name = path.basename(parsedFile.path);
+              metadataAcq.acquisition.files.push({
+                name,
+                type: parsedFile.type
+              });
+              filesForUpload.push({
+                name,
+                content: parsedFile.content
+              });
+            }
+          }
+          // We zip up dicoms for an acquisition before uploading.
+          // Other data is uploaded without modification.
+          const zipPromise = dicomPaths.length ?
+            zipQueues.append({files: dicomPaths}) : Promise.resolve();
           zipPromise.then(function(zip) {
-            let files = [{
-              content: zip,
-              name: filename
-            }];
-            organizerUpload.upload(vm.url, files, metadata, vm.apiKey, vm.asRoot).then(()=>{
+            if (dicomPaths.length) {
+              const dicomFilename = acquisitionUID + '.zip';
+              metadataAcq.acquisition.files.push({
+                name: dicomFilename,
+                type: 'dicom'
+              });
+              filesForUpload.push({
+                name: dicomFilename,
+                content: zip
+              });
+            }
+            const metadata = JSON.stringify(Object.assign(
+              {},
+              metadataBase,
+              metadataSes,
+              metadataAcq
+            ));
+            organizerUpload.upload(vm.url, filesForUpload, metadata, vm.apiKey, vm.asRoot).then(()=>{
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
               if (progress.state >= 100.0){
@@ -134,7 +162,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
             (err) => {
               success.state = 'failure';
               console.log(err);
-              success.reason = ': an error occurred';
+              success.reason = `: ${err.message}`;
               busy.state = false;
               $rootScope.$apply();
               $scope.$on('$destroy', function(){

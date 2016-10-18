@@ -110,7 +110,7 @@ function organizeCtrl(steps, organizerStore){
           labels[dicom.acquisitionLabel] = 1;
         }
         acquisitions[dicom.acquisitionLabel] = {
-          filepaths: [],
+          parsedFiles: [],
           acquisitionLabel: dicom.acquisitionLabel,
           acquisitionUID: dicom.acquisitionUID,
           acquisitionTimestamp: dicom.acquisitionTimestamp,
@@ -125,7 +125,7 @@ function organizeCtrl(steps, organizerStore){
       let acquisition = acquisitions[dicom.acquisitionLabel];
       acquisition.count += 1;
       acquisition.size += dicom.size;
-      acquisition.filepaths.push(dicom.path);
+      acquisition.parsedFiles.push(dicom);
     });
     select(project);
     vm.projects = [project];
