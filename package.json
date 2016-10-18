@@ -16,6 +16,7 @@
     "pack:build": "npm run clean && npm run lint && npm run webpack",
     "pack:osx": "npm run pack:build && electron-packager . --out=dist/osx --platform=darwin --arch=x64 --icon=assets/osx/logo.icns --prune --ignore=assets --ignore=dist --ignore=scss",
     "pack:win": "npm run pack:build && electron-packager . --out=dist/win --platform=win32 --arch=ia32 --icon=assets/win/logo.ico --prune--ignore=assets --ignore=dist --ignore=scss",
+    "pack:linux": "npm run pack:build && electron-packager . --out=dist/linux --platform=linux --arch=x64 --prune--ignore=assets --ignore=dist --ignore=scss",
     "webpack": "webpack",
     "watch": "webpack-dev-server --hot --inline",
     "node": "node"
