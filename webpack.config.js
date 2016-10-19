@@ -20,7 +20,7 @@ module.exports = {
     ],
     loaders: [
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.css$/, loader: 'style-loader!css-loader' },
+      { test: /\.scss$/, loaders: ['style', 'css', 'sass'] },
       { test: /\.html$/, loader: 'raw-loader'}
     ],
     // workaround to solve https://github.com/webpack/webpack/issues/138

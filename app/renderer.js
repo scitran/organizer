@@ -10,7 +10,7 @@ if (process.env.HOT) {
   require('../partials/organize.html');
   require('../index.html');
 }
-require('../css/global.css');
+require('../scss/global.scss');
 
 const angular = require('angular');
 const app = angular.module('app', [require('angular-ui-router')]);
