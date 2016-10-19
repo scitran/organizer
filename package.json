@@ -9,7 +9,7 @@
     "start-hot": "cross-env HOT=1 electron main.js",
     "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
     "lint": "eslint app *.js",
-    "test": "electron-mocha renderer ./tests --recursive",
+    "test": "xvfb-maybe electron-mocha renderer ./tests --recursive",
     "clean": "rm -rf ./build ./css ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
@@ -66,6 +66,7 @@
     "dicom-parser": "^1.7.4",
     "nifti-js": "^1.0.1",
     "request": "^2.74.0",
-    "rx": "^4.1.0"
+    "rx": "^4.1.0",
+    "xvfb-maybe": "^0.1.3"
   }
 }
