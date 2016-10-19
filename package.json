@@ -9,6 +9,7 @@
     "start-hot": "cross-env HOT=1 electron main.js",
     "dev": "concurrently --kill-others \"npm run watch\" \"npm run start-hot\"",
     "lint": "eslint app *.js",
+    "test": "electron-mocha renderer ./tests --recursive",
     "clean": "rm -rf ./build ./css ./dist",
     "clean:osx": "rm -rf ./dist/osx",
     "clean:win": "rm -rf ./dist/win",
