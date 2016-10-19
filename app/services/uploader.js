@@ -1,26 +1,32 @@
 'use strict';
 const angular = require('angular');
 const app = angular.module('app');
+const urlParse = require('url').parse;
 
 app.factory('organizerUpload', organizerUpload);
 
 organizerUpload.$inject = ['apiQueues'];
 
+const localHostnames = new Set([
+  'docker.local.flywheel.io',
+  'localhost'
+]);
+
 function organizerUpload(apiQueues) {
   function _request(options) {
     let url = options.url;
     if (url[0] === '/' && options.instance) {
-      url = `https://${options.instance}/api${options.url}`;
+      // this removes port when instance is something like localhost:8080
+      const hostname = urlParse('test://' + options.instance).hostname;
+      const scheme = localHostnames.has(hostname) ? 'http' : 'https';
+      url = `${scheme}://${options.instance}/api${options.url}`;
     }
     return apiQueues.append({
       options: Object.assign({}, options, {
         url,
         headers: Object.assign({
           'Authorization':  'scitran-user ' + options.apiKey
-        }, options.headers),
-        agentOptions: Object.assign({
-          rejectUnauthorized: false
-        }, options.agentOptions)
+        }, options.headers)
       })
     });
   }
