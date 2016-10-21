@@ -8,6 +8,8 @@ angular.module('app').factory('config', config);
 
 config.$inject = [];
 
+// Must use `remote.process` because of linux. See
+// https://github.com/electron/electron/issues/3306 for more details.
 const configPath = path.join(remote.process.env.USER_DATA_PATH, 'user.json');
 console.log('Config path:', configPath);
 
