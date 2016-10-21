@@ -38,6 +38,15 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     }
   };
 
+  const parseFileHeaders = (buffer, filePath, ext) => {
+    // we pass ext in because we may have decompressed the file content earlier.
+    const parseHeaders = parseHeadersForExt[ext];
+    if (!parseHeaders) {
+      throw new Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
+    }
+    return parseHeaders(buffer, filePath);
+  };
+
   const parseFile = (filePath) => {
     return fileSystemQueues.append({
       operation: 'read',
@@ -53,10 +62,7 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
           ext = path.extname(filePath.slice(0, filePath.length - ext.length));
         }
         const size = buffer.length * buffer.BYTES_PER_ELEMENT;
-        if (!parseHeadersForExt[ext]) {
-          throw new Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
-        }
-        const header = parseHeadersForExt[ext](buffer, filePath);
+        const header = parseFileHeaders(buffer, filePath, ext);
         const type = extToScitranType[ext];
         if (!type) {
           throw new Error(`Invalid extension ${ext} for file ${filePath}`);
