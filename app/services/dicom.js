@@ -110,35 +110,6 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     return m;
   };
 
-  const parseDicoms = (files, count) => {
-    console.log(count);
-    const increment = 100.0/count;
-    const progress = organizerStore.get().progress;
-    return files.flatMap(
-      (f) => {
-        return parseFile(f).catch(
-          function(err) {
-            return {
-              path: f,
-              err: err
-            };
-          }
-        );
-      }
-    )
-    .map(
-      (o) => {
-        progress.state += increment;
-        $rootScope.$apply();
-        return o;
-      }
-    )
-    .doOnCompleted(() => {
-      progress.state = 0;
-      $rootScope.$apply();
-    });
-  };
-
   const sortDicoms = function(path) {
     const subject = new Rx.Subject();
     try {
@@ -147,58 +118,57 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
       subject.onError(path + ' is not accessible on the filesystem.');
     }
     const obsFiles$ = dirListObs(path);
-    let count = 0;
-    const dicoms = [];
-    const errors = [];
-    obsFiles$.subscribe(
-      function(elem) {
-        if (elem.err) {
-          errors.push(elem);
-        } else {
-          count += 1;
-        }
-      },
-      function(err) { throw err;},
-      function() {
-        console.log(count);
-        const dicoms$ = parseDicoms(
-          obsFiles$.filter(elem => !elem.err).map(elem => elem.path),
-          count
-        );
+    obsFiles$.toArray().subscribe(function(files){
+      const errors = files.filter(file => file.err);
+      const nonerrors = files.filter(file => !file.err);
+      const start = Date.now();
+      const increment = 100.0 / nonerrors.length;
+      const progress = organizerStore.get().progress;
+      const parsed = [];
 
-        const start = Date.now();
-
-        dicoms$.subscribe(
-          function(dicom) {
-            if (dicom.err){
-              errors.push(dicom);
-            } else {
-              dicoms.push(dicom);
-            }
-          },
-          function (err) {
-            subject.onError(err);
-            console.log('Error: ' + err);
-          },
-          function () {
-            subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
-            if (errors.length) {
-              subject.onNext({errors: errors});
-            }
-            console.log(dicoms.length);
-            subject.onNext(dicoms);
-            subject.onCompleted();
+      Promise.all(nonerrors.map(function(file) {
+        const p = parseFile(file.path).catch(function(err) {
+          return {
+            path: file.path,
+            err: err
+          };
+        });
+        p.then(function() {
+          // this runs in both success and error
+          progress.state += increment;
+          $rootScope.$apply();
+        });
+        return p;
+      })).then(function(results) {
+        for (const result of results) {
+          if (result.err){
+            errors.push(result);
+          } else {
+            parsed.push(result);
           }
-        );
-      }
-    );
+        }
+        subject.onNext({message: `Processed ${parsed.length} files in ${(Date.now() - start)/1000} seconds`});
+        if (errors.length) {
+          subject.onNext({errors: errors});
+        }
+        console.log(parsed.length);
+        subject.onNext(parsed);
+        subject.onCompleted();
+      }, function(err) {
+        subject.onError(err);
+        console.log('Error: ' + err);
+      }).then(function() {
+        // this runs in both success and error
+        progress.state = 0;
+        $rootScope.$apply();
+      });
+    });
 
     return subject;
   };
 
   return {
     dicomDump: dicomDump,
-    parseDicoms: parseDicoms,
     sortDicoms: sortDicoms
   };
 }
