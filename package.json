@@ -21,7 +21,8 @@
     "node": "node"
   },
   "directories": {
-    "app": "."
+    "app": ".",
+    "buildResources": "build-resources-named-to-avoid-collisions-with-webpack-output"
   },
   "build": {
     "appId": "organizer.flywheel.io",
