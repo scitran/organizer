@@ -28,7 +28,6 @@
     "appId": "organizer.flywheel.io",
     "linux": {
       "target": [
-        "deb",
         "AppImage"
       ]
     },
