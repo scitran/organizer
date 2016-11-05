@@ -11,6 +11,17 @@ uploadCtrl.$inject = ['$scope', '$rootScope', '$timeout', 'organizerStore', 'org
 // jshint maxparams:7
 function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUpload, zipQueues, config){
   /*jshint validthis: true */
+  function updateAsync(body) {
+    const {success, busy} = organizerStore.get();
+    Object.assign(success, {
+      state: '',
+      reason: ''
+    }, body.success);
+    Object.assign(busy, {
+      state: false,
+      reason: ''
+    }, body.busy);
+  }
   const vm = this;
   vm.projectWarning = '';
   vm.asRoot = false;
@@ -56,11 +67,9 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
   };
 
   vm.upload = function upload() {
-    const success = organizerStore.get().success;
     let projects = organizerStore.get().projects;
-    const busy = organizerStore.get().busy;
-    busy.state = true;
-    busy.reason = 'Uploading data...';
+    const progress = organizerStore.get().progress;
+    updateAsync({ busy: { state: true, reason: 'Uploading data...' } });
     projects.forEach((p) => {
       if (p.state !== 'checked' && p.state !== 'indeterminate'){
         return;
@@ -69,7 +78,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
         'group': {_id: vm.destinationGroup._id},
         'project': {label: p.label}
       };
-      Object.keys(p.children).forEach((sessionUID) => {
+      const uploads = Object.keys(p.children).map((sessionUID) => {
         const session = p.children[sessionUID];
         if (session.state !== 'checked' && session.state !== 'indeterminate'){
           return;
@@ -84,10 +93,9 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
           }
         };
         const acqKeys = Object.keys(session.children);
-        const progress = organizerStore.get().progress;
         const size = organizerStore.get().loaded.size;
         progress.size = 0;
-        acqKeys.forEach((acquisitionUID) => {
+        return Promise.all(acqKeys.map((acquisitionUID) => {
           const acquisition = session.children[acquisitionUID];
           if (acquisition.state !== 'checked' && acquisition.state !== 'indeterminate'){
             return;
@@ -125,7 +133,7 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
           // Other data is uploaded without modification.
           const zipPromise = dicomPaths.length ?
             zipQueues.append({files: dicomPaths}) : Promise.resolve();
-          zipPromise.then(function(zip) {
+          return zipPromise.then(function(zip) {
             if (dicomPaths.length) {
               const dicomFilename = acquisitionUID + '.zip';
               metadataAcq.acquisition.files.push({
@@ -143,36 +151,32 @@ function uploadCtrl($scope, $rootScope, $timeout, organizerStore, organizerUploa
               metadataSes,
               metadataAcq
             ));
-            organizerUpload.upload(vm.url, filesForUpload, metadata, vm.apiKey, vm.asRoot).then(()=>{
+            return organizerUpload.upload(vm.url, filesForUpload, metadata, vm.apiKey, vm.asRoot).then(function() {
               progress.size += acquisition.size;
               progress.state = 100.0 * progress.size/size;
-              if (progress.state >= 100.0){
-                progress.state = 0;
-                success.state = 'success';
-                busy.state = false;
-                busy.reason = '';
-                $timeout(function(){
-                  success.state = '';
-
-                  $rootScope.$apply();
-                }, 2000);
-              }
               $rootScope.$apply();
-            },
-            (err) => {
-              success.state = 'failure';
-              console.log(err);
-              success.reason = `: ${err.message}`;
-              busy.state = false;
-              $rootScope.$apply();
-              $scope.$on('$destroy', function(){
-                success.state = '';
-                progress.state = 0;
-                $rootScope.$apply();
-              });
-            }
-          );
+            });
           });
+        }));
+      });
+      Promise.all(uploads).then(()=>{
+        progress.state = 0;
+        updateAsync({ success: { state: 'success' } });
+        $timeout(function(){
+          updateAsync({ success: { state: '' } });
+          $rootScope.$apply();
+        }, 2000);
+        $rootScope.$apply();
+      }, (err) => {
+        updateAsync({ success: {
+          state: 'failure',
+          reason: `: ${err.message}`
+        } });
+        $rootScope.$apply();
+        $scope.$on('$destroy', function(){
+          updateAsync({ success: { state: '' } });
+          progress.state = 0;
+          $rootScope.$apply();
         });
       });
     });
