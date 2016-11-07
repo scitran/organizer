@@ -10,3 +10,8 @@ cd organizer
 npm install
 npm run dev
 ```
+
+To build the app for Linux, Windows, and Mac (output is in `dist`), run
+```shell
+npm run build
+```
