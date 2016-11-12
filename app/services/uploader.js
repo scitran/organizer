@@ -64,16 +64,11 @@ function organizerUpload(apiQueues) {
     });
   }
   function upload(instance, files, metadata, apiKey, root) {
-    var formData = {
-      metadata: metadata
-    };
+    const body = new FormData();
+    body.append('metadata', metadata);
     for (let i = 0; i < files.length; i++) {
-      formData['file' + i] = {
-        value: files[i].content,
-        options: {
-          filename: files[i].name
-        }
-      };
+      const f = files[i];
+      body.append('file' + i, new Blob([f.content]), f.name);
     }
     return _request({
       method: 'POST',
@@ -81,7 +76,7 @@ function organizerUpload(apiQueues) {
       apiKey,
       url: `/upload/label?root=${root||false}`,
       throwForStatus: true,
-      formData: formData
+      body: body
     });
   }
 }
