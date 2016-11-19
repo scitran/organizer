@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: __dirname + '/build',
     filename: 'app.bundle.js',
-    publicPath: 'http://localhost:8080/build'
+    publicPath: 'http://localhost:8181/build'
   },
   devtool: '#cheap-source-map',
   module: {

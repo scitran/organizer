@@ -17,7 +17,7 @@
     "pack": "npm run build -- --dir",
     "build": "npm run prebuild && build -lmw",
     "webpack": "webpack",
-    "watch": "webpack-dev-server --hot --inline",
+    "watch": "webpack-dev-server --hot --inline --port 8181",
     "node": "node"
   },
   "directories": {
