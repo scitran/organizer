@@ -82,7 +82,6 @@
     "archiver": "^1.0.1",
     "dicom-parser": "^1.7.4",
     "electron-squirrel-startup": "^1.0.0",
-    "nifti-js": "^1.0.1",
     "rx": "^4.1.0",
     "xvfb-maybe": "^0.1.3"
   }

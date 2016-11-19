@@ -9,7 +9,6 @@ const zlib = require('zlib');
 const Rx = require('rx');
 const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
-const nifti = require('nifti-js');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
 const crypto = require('crypto');
 const filetypes = require('../common/filetypes.json');
@@ -28,23 +27,9 @@ const decompressForExt = {
 };
 
 function dicom($rootScope, organizerStore, fileSystemQueues) {
-  const parseHeadersForExt = {
-    '.nii': function(buffer) {
-      // TODO write a function that converts this into proper headers.
-      return nifti.parseNIfTIHeader(buffer);
-    },
-    '.dcm': function(buffer) {
-      return convertHeaderToObject(dicomParser.parseDicom(buffer));
-    }
-  };
 
-  const parseFileHeaders = (buffer, filePath, ext) => {
-    // we pass ext in because we may have decompressed the file content earlier.
-    const parseHeaders = parseHeadersForExt[ext];
-    if (!parseHeaders) {
-      throw new Error(`Could not parse headers for file ${filePath} with extension ${ext}.`);
-    }
-    return parseHeaders(buffer, filePath);
+  const parseFileHeaders = (buffer) => {
+    return convertHeaderToObject(dicomParser.parseDicom(buffer));
   };
 
   const parseFile = (filePath) => {
