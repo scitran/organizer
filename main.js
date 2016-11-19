@@ -14,6 +14,10 @@ if (process.platform === 'darwin') {
   app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
 }
 
+if (process.argv.indexOf('--ignore-certificate-errors') !== -1) {
+  app.commandLine.appendSwitch('ignore-certificate-errors');
+}
+
 process.env.USER_DATA_PATH = app.getPath('userData');
 
 ipc.on('open-file-dialog', function (event, arg) {

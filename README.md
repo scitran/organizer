@@ -11,6 +11,11 @@ npm install
 npm run dev
 ```
 
+To run ignore HTTPS certificate errors when running the app in development, try
+```shell
+npm run dev-insecure
+```
+
 To build the app for Linux, Windows, and Mac (output is in `dist`), run
 ```shell
 npm run build

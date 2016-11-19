@@ -8,7 +8,6 @@ app.factory('organizerUpload', organizerUpload);
 organizerUpload.$inject = ['apiQueues'];
 
 const localHostnames = new Set([
-  'docker.local.flywheel.io',
   'localhost'
 ]);
 
