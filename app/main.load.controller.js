@@ -40,22 +40,22 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
             busy.reason = '';
             const errors = organizerStore.get().errors;
             const errorsLength = errors?errors.length:0;
+            const parsingErrors = organizerStore.get().fileErrors.parsing;
             let messageDelay = 2000;
             success.state = 'success';
             if (errorsLength) {
               success.state = 'warning';
               success.reason = `There have been ${errorsLength} errors out of ${dicomsOrMessage.length + errorsLength} files`;
-              organizerStore.get().fileErrors.parsing = {
-                title: 'Parsing Errors',
-                files: errors.map(function(e) {
-                  return {
-                    basename: path.relative(paths[0], e.path),
-                    message: e.err.message || e.err
-                  };
-                })
-              };
+              parsingErrors.files = errors.map(function(e) {
+                return {
+                  basename: path.relative(paths[0], e.path),
+                  message: e.err.message || e.err
+                };
+              });
               organizerStore.update({errors: []});
               messageDelay = 5000;
+            } else {
+              parsingErrors.files = [];
             }
             $rootScope.$apply();
             $timeout(function(){

@@ -22,7 +22,12 @@ function organizerStore() {
     busy: {
       state: false
     },
-    fileErrors: {}
+    fileErrors: {
+      parsing: {
+        title: 'Parsing Errors',
+        files: []
+      }
+    }
   };
   const service = {
     get: get,
