@@ -48,10 +48,7 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
         }
         const size = buffer.length * buffer.BYTES_PER_ELEMENT;
         const header = parseFileHeaders(buffer, filePath, ext);
-        const type = extToScitranType[ext];
-        if (!type) {
-          throw new Error(`Invalid extension ${ext} for file ${filePath}`);
-        }
+        const type = extToScitranType[ext] || extToScitranType['.dcm'];
         return {
           path: filePath,
           contentExt: ext,
