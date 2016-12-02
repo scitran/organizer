@@ -2,6 +2,7 @@
 const angular = require('angular');
 const app = angular.module('app');
 const urlParse = require('url').parse;
+const {FormData,wrapBuffer} = require('../common/fetch');
 
 app.factory('organizerUpload', organizerUpload);
 
@@ -67,7 +68,7 @@ function organizerUpload(apiQueues) {
     body.append('metadata', metadata);
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
-      body.append('file' + i, new Blob([f.content]), f.name);
+      body.append('file' + i, wrapBuffer(f.content), f.name);
     }
     return _request({
       method: 'POST',
