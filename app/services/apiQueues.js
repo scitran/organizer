@@ -2,6 +2,7 @@
 const angular = require('angular');
 const app = angular.module('app');
 const urlLibrary = require('url');
+const {fetch} = require('../common/fetch');
 
 app.factory('apiQueues', queues);
 queues.$inject = ['queueFactory'];
@@ -20,7 +21,7 @@ function exec(message) {
   } = message;
 
   fetch(url, message.options).then(function(response) {
-    return [response, response.text()];
+    return Promise.all([response, response.text()]);
   }).then(function([response, body]) {
     if (message.options.throwForStatus && !response.ok) {
       let msg = '';

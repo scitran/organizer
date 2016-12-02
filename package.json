@@ -81,6 +81,8 @@
     "archiver": "^1.0.1",
     "dicom-parser": "^1.7.4",
     "electron-squirrel-startup": "^1.0.0",
+    "form-data": "^2.1.2",
+    "node-fetch": "^1.6.3",
     "rx": "^4.1.0",
     "xvfb-maybe": "^0.1.3"
   }
