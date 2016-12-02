@@ -29,15 +29,38 @@ fetch(host + '/message', {body}).then(function(response) {
 });
 ```
 */
-
+const https = require('https');
+const {remote} = require('electron');
 const environmentNeedsBrowserHTTP = process.platform == 'linux';
 
 if (environmentNeedsBrowserHTTP) {
   exports.fetch = window.fetch;
   exports.FormData = window.FormData;
 } else {
-  exports.fetch = require('node-fetch');
+  const _fetch = require('node-fetch');
   exports.FormData = require('form-data');
+  // add the option rejectUnauthorized: false if ignore-certificate-errors is set
+  if (remote.process.argv.indexOf('--ignore-certificate-errors') !== -1) {
+    const agent = new https.Agent({rejectUnauthorized: false});
+    exports.fetch = (url, options) => {
+      if (typeof options !== 'object') {
+        options = {};
+      }
+      if (!options.agent) {
+        options.agent = agent;
+      } else{
+        options.agent = new https.Agent(
+          Object.assign({},
+            options.agent.options,
+            {rejectUnauthorized: false}
+          )
+        );
+      }
+      return _fetch(url, options)
+    };
+  } else {
+    exports.fetch = _fetch;
+  }
 }
 
 exports.wrapBuffer = function(buffer) {
