@@ -2,7 +2,10 @@
 
 const angular = require('angular');
 const app = angular.module('app');
-const ipc = require('electron').ipcRenderer;
+const path = require('path');
+const {ipcPromiseCreator} = require('./common/ipc');
+
+const openFileDialog = ipcPromiseCreator('open-file-dialog', 'selected-directory');
 
 app.controller('loadCtrl', loadCtrl);
 
@@ -16,15 +19,14 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
     steps.complete();
   }
   function selectFolder() {
-    ipc.send('open-file-dialog', steps.current());
-    ipc.once('selected-directory', function (event, path) {
+    openFileDialog(steps.current()).then(function(paths) {
       organizerStore.update({dicoms: [], errors: []});
       const busy = organizerStore.get().busy;
       const success = organizerStore.get().success;
       busy.state = true;
       busy.reason = 'Loading data...';
       $rootScope.$apply();
-      const subject = dicom.sortDicoms(path[0]);
+      const subject = dicom.sortDicoms(paths[0]);
       subject.subscribe(
         (dicomsOrMessage) => {
           if (dicomsOrMessage.message !== undefined){
@@ -38,13 +40,22 @@ function loadCtrl($timeout, $rootScope, steps, organizerStore, dicom) {
             busy.reason = '';
             const errors = organizerStore.get().errors;
             const errorsLength = errors?errors.length:0;
+            const parsingErrors = organizerStore.get().fileErrors.parsing;
             let messageDelay = 2000;
             success.state = 'success';
             if (errorsLength) {
               success.state = 'warning';
               success.reason = `There have been ${errorsLength} errors out of ${dicomsOrMessage.length + errorsLength} files`;
+              parsingErrors.files = errors.map(function(e) {
+                return {
+                  basename: path.relative(paths[0], e.path),
+                  message: e.err.message || e.err
+                };
+              });
               organizerStore.update({errors: []});
               messageDelay = 5000;
+            } else {
+              parsingErrors.files = [];
             }
             $rootScope.$apply();
             $timeout(function(){

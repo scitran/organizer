@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const Rx = require('rx');
+const {join} = require('path');
 
 const dirListObs = function(path) {
   const _helperObs = elem =>
@@ -9,7 +10,7 @@ const dirListObs = function(path) {
         fs.readdir(elem.path, (err, files) => {
           const p = Promise.resolve();
           const final = files.reduce((p, f) => {
-            const path = elem.path + '/' + f;
+            const path = join(elem.path, f);
             return p.then(function() {
               return new Promise(function(resolve) {
                 fs.stat(path, (err, stat) => {

@@ -4,21 +4,60 @@ const angular = require('angular');
 const app = angular.module('app');
 
 const fs = require('fs');
+const path = require('path');
+const zlib = require('zlib');
 const Rx = require('rx');
 const {dirListObs} = require('../common/util.js');
 const dicomParser = require('dicom-parser');
 const TAG_DICT = require('../common/dataDictionary.js').TAG_DICT;
+const crypto = require('crypto');
+const filetypes = require('../common/filetypes.json');
+
+const extToScitranType = {};
+for (const type of Object.keys(filetypes)) {
+  for (const ext of filetypes[type]) {
+    extToScitranType[ext] = type;
+  }
+}
+
+const decompressForExt = {
+  '.gz': function gunzip(buffer) {
+    return zlib.gunzipSync(buffer);
+  }
+};
 
 function dicom($rootScope, organizerStore, fileSystemQueues) {
-  const parse = (filePath) => {
+
+  const parseFileHeaders = (buffer) => {
+    return convertHeaderToObject(dicomParser.parseDicom(buffer));
+  };
+
+  const parseFile = (filePath) => {
     return fileSystemQueues.append({
       operation: 'read',
       path: filePath
     }).then(
-      function(dicomFileAsBuffer) {
-        const size = dicomFileAsBuffer.length * dicomFileAsBuffer.BYTES_PER_ELEMENT;
-        const dp = dicomParser.parseDicom(dicomFileAsBuffer);
-        return {dp: dp, size: size};
+      function(buffer) {
+        let ext = path.extname(filePath);
+        // we compute hash before unzipping because that's what we will upload.
+        const hash = 'v0-sha384-' + crypto.createHash('sha384').update(buffer).digest('hex');
+        if (decompressForExt[ext]) {
+          buffer = decompressForExt[ext](buffer);
+          // now let's see what's after the compression extension
+          ext = path.extname(filePath.slice(0, filePath.length - ext.length));
+        }
+        const size = buffer.length * buffer.BYTES_PER_ELEMENT;
+        const header = parseFileHeaders(buffer, filePath, ext);
+        const type = extToScitranType[ext] || extToScitranType['.dcm'];
+        return {
+          path: filePath,
+          contentExt: ext,
+          content: buffer,
+          size,
+          hash,
+          type,
+          header
+        };
       }
     );
   };
@@ -31,13 +70,10 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
   };
 
   const dicomDump = (filePath) => {
-    const dp = parse(filePath).dp;
+    const header = parseFile(filePath).header;
     let dump = [];
-    for (let key of Object.keys(dp.elements)) {
-      let tag = getTag(key);
-      let value = dp.string(key);
-      let line = (tag && (tag.name + ': ' + value)) || (key + ': ' + value);
-      dump.push(line);
+    for (let key of Object.keys(header)) {
+      dump.push(`${key}: ${header[key]}`);
     }
     return dump;
   };
@@ -56,42 +92,6 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
     return m;
   };
 
-  const parseDicoms = (files, count) => {
-    console.log(count);
-    const increment = 100.0/count;
-    const progress = organizerStore.get().progress;
-    return files.flatMap(
-      (f) => {
-        return parse(f).then(
-          function(parsed) {
-            return {
-              path: f,
-              size: parsed.size,
-              header: convertHeaderToObject(parsed.dp)
-            };
-          },
-          function(err) {
-            return {
-              path: f,
-              err: err
-            };
-          }
-        );
-      }
-    )
-    .map(
-      (o) => {
-        progress.state += increment;
-        $rootScope.$apply();
-        return o;
-      }
-    )
-    .doOnCompleted(() => {
-      progress.state = 0;
-      $rootScope.$apply();
-    });
-  };
-
   const sortDicoms = function(path) {
     const subject = new Rx.Subject();
     try {
@@ -100,58 +100,57 @@ function dicom($rootScope, organizerStore, fileSystemQueues) {
       subject.onError(path + ' is not accessible on the filesystem.');
     }
     const obsFiles$ = dirListObs(path);
-    let count = 0;
-    const dicoms = [];
-    const errors = [];
-    obsFiles$.subscribe(
-      function(elem) {
-        if (elem.err) {
-          errors.push(elem);
-        } else {
-          count += 1;
-        }
-      },
-      function(err) { throw err;},
-      function() {
-        console.log(count);
-        const dicoms$ = parseDicoms(
-          obsFiles$.filter(elem => !elem.err).map(elem => elem.path),
-          count
-        );
+    obsFiles$.toArray().subscribe(function(files){
+      const errors = files.filter(file => file.err);
+      const nonerrors = files.filter(file => !file.err);
+      const start = Date.now();
+      const increment = 100.0 / nonerrors.length;
+      const progress = organizerStore.get().progress;
+      const parsed = [];
 
-        const start = Date.now();
-
-        dicoms$.subscribe(
-          function(dicom) {
-            if (dicom.err){
-              errors.push(dicom);
-            } else {
-              dicoms.push(dicom);
-            }
-          },
-          function (err) {
-            subject.onError(err);
-            console.log('Error: ' + err);
-          },
-          function () {
-            subject.onNext({message: `Processed ${dicoms.length} files in ${(Date.now() - start)/1000} seconds`});
-            if (errors.length) {
-              subject.onNext({errors: errors});
-            }
-            console.log(dicoms.length);
-            subject.onNext(dicoms);
-            subject.onCompleted();
+      Promise.all(nonerrors.map(function(file) {
+        const p = parseFile(file.path).catch(function(err) {
+          return {
+            path: file.path,
+            err: err
+          };
+        });
+        p.then(function() {
+          // this runs in both success and error
+          progress.state += increment;
+          $rootScope.$apply();
+        });
+        return p;
+      })).then(function(results) {
+        for (const result of results) {
+          if (result.err){
+            errors.push(result);
+          } else {
+            parsed.push(result);
           }
-        );
-      }
-    );
+        }
+        subject.onNext({message: `Processed ${parsed.length} files in ${(Date.now() - start)/1000} seconds`});
+        if (errors.length) {
+          subject.onNext({errors: errors});
+        }
+        console.log(parsed.length);
+        subject.onNext(parsed);
+        subject.onCompleted();
+      }, function(err) {
+        subject.onError(err);
+        console.log('Error: ' + err);
+      }).then(function() {
+        // this runs in both success and error
+        progress.state = 0;
+        $rootScope.$apply();
+      });
+    });
 
     return subject;
   };
 
   return {
     dicomDump: dicomDump,
-    parseDicoms: parseDicoms,
     sortDicoms: sortDicoms
   };
 }

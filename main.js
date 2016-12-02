@@ -1,6 +1,9 @@
 /* global __dirname, process */
 'use strict';
 
+// handles standard squirrel events for windows (which are required)
+if (require('electron-squirrel-startup')) return;
+
 const {app, BrowserWindow, Menu} = require('electron');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
@@ -9,6 +12,10 @@ const dialog = require('electron').dialog;
 // windows.
 if (process.platform === 'darwin') {
   app.commandLine.appendSwitch('js-flags','--max_old_space_size=4096');
+}
+
+if (process.argv.indexOf('--ignore-certificate-errors') !== -1) {
+  app.commandLine.appendSwitch('ignore-certificate-errors');
 }
 
 process.env.USER_DATA_PATH = app.getPath('userData');

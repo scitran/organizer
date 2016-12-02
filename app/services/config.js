@@ -2,13 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 const angular = require('angular');
-const process = require('process');
+const {remote} = require('electron');
 
 angular.module('app').factory('config', config);
 
 config.$inject = [];
 
-const configPath = path.join(process.env.USER_DATA_PATH, 'user.json');
+// Must use `remote.process` because of linux. See
+// https://github.com/electron/electron/issues/3306 for more details.
+const configPath = path.join(remote.process.env.USER_DATA_PATH, 'user.json');
+console.log('Config path:', configPath);
 
 function config() {
   let config;
