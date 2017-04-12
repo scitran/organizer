@@ -12,7 +12,7 @@ function queues(queueFactory) {
   };
 }
 
-function exec(message) {
+function baseFetch(message) {
   const {
     options: {
       method,
@@ -20,7 +20,7 @@ function exec(message) {
     }
   } = message;
 
-  fetch(url, message.options).then(function(response) {
+  return fetch(url, message.options).then(function(response) {
     return Promise.all([response, response.text()]);
   }).then(function([response, body]) {
     if (message.options.throwForStatus && !response.ok) {
@@ -30,13 +30,23 @@ function exec(message) {
       } catch(e) {
         console.error(`Could not parse response from server: ${body}`);
       }
-      message._reject(new Error(`${msg}HTTP Server responded with ${response.status} for
-${method} ${urlLibrary.format(url)}`));
+      throw new Error(`${msg}HTTP Server responded with ${response.status} for
+${method} ${urlLibrary.format(url)}`);
     } else {
-      message._resolve(body);
+      return body;
     }
   }).catch(function(error) {
     console.log(error);
+    throw error;
+  });
+}
+
+exports.baseFetch = baseFetch;
+
+function exec(message) {
+  baseFetch(message).then(function(result) {
+    message._resolve(result);
+  }).catch(function(error) {
     message._reject(error);
-  })
+  });
 }
